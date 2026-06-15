@@ -1,13 +1,12 @@
 //
-//  ContentView.swift
+//  MainScreenView.swift
 //  aiGeneratorTestTask
 //
-//  Created by Sanya Tamostroenko on 15.06.26.
 //
 
 import SwiftUI
 
-struct ContentView: View {
+struct MainScreenView: View {
     var body: some View {
         VStack {
             Image(systemName: "globe")
@@ -20,5 +19,5 @@ struct ContentView: View {
 }
 
 #Preview {
-    ContentView()
+    MainScreenView()
 }
