@@ -13,11 +13,7 @@ struct GradientImageView: View {
         Image(image)
             .resizable()
             .renderingMode(.template)
-            .foregroundStyle(.linearGradient(
-                .init(colors: [.gradientBlue, .gradientPink]),
-                startPoint: .top,
-                endPoint: .bottom)
-            )
+            .foregroundStyle(BluePinkGradientStyle())
             .scaledToFit()
     }
 }
