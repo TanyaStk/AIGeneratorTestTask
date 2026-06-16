@@ -42,15 +42,6 @@ enum AIToolType {
         }
     }
     
-    var isFeatured: Bool {
-        switch self {
-        case .photoToVideo:
-            true
-        case .rewriteText, .summarizeText:
-            false
-        }
-    }
-    
     var footerText: String? {
         switch self {
         case .photoToVideo:
