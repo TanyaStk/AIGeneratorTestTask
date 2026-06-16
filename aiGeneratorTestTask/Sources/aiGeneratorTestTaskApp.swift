@@ -11,6 +11,7 @@ struct aiGeneratorTestTaskApp: App {
         WindowGroup {
             MainScreenView()
                 .embedRouter()
+                .colorScheme(.dark)
         }
     }
 }
