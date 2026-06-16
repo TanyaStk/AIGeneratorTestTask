@@ -16,6 +16,16 @@ struct BluePinkGradientStyle: ShapeStyle {
     }
 }
 
+struct BluePinkGradientView: View {
+    var body: some View {
+        LinearGradient(
+            colors: [.gradientBlue, .gradientPink],
+            startPoint: .leading,
+            endPoint: .trailing
+        )
+    }
+}
+
 #Preview {
     Circle()
         .foregroundStyle(BluePinkGradientStyle())
