@@ -16,6 +16,7 @@ struct AppRouterViewModifier: ViewModifier {
                 .environmentObject(router)
                 .navigationDestination(for: AppRouter.Destination.self) { destination in
                     routeView(for: destination)
+                        .toolbar(.hidden, for: .navigationBar)
                         .environmentObject(router)
                 }
         }
@@ -29,9 +30,13 @@ private extension AppRouterViewModifier {
         case .settings:
             SettingsView()
         case .photoToVideoGeneration:
-            PhotoToVideoGenerationView()
+            VideoGenerationView(viewModel: VideoGenerationViewModel())
         case .aiChat:
             AIChatView()
+        case .templateDetail(selected: let selected, all: let all):
+            VideoTemplateDetailView(viewModel: VideoTemplateDetailViewModel(selected: selected, all: all))
+        case .history(type: let type):
+            HistoryView()
         }
     }
 }
