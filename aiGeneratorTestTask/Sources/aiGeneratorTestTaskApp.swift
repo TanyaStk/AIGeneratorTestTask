@@ -10,6 +10,7 @@ struct aiGeneratorTestTaskApp: App {
     var body: some Scene {
         WindowGroup {
             MainScreenView()
+                .embedRouter()
         }
     }
 }
