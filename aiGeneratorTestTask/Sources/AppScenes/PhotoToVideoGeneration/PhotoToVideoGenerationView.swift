@@ -1,16 +1,16 @@
 //
-//  PhotoToViewGenerationView.swift
+//  PhotoToVideoGenerationView.swift
 //  aiGeneratorTestTask
 //
 
 import SwiftUI
 
-struct PhotoToViewGenerationView: View {
+struct PhotoToVideoGenerationView: View {
     var body: some View {
         Text("Hello, PHOTO TO VIEW GENERATION")
     }
 }
 
 #Preview {
-    PhotoToViewGenerationView()
+    PhotoToVideoGenerationView()
 }

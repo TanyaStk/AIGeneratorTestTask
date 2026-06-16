@@ -29,7 +29,7 @@ private extension AppRouterViewModifier {
         case .settings:
             SettingsView()
         case .photoToVideoGeneration:
-            PhotoToViewGenerationView()
+            PhotoToVideoGenerationView()
         case .aiChat:
             AIChatView()
         }
