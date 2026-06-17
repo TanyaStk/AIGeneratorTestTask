@@ -1,23 +1,30 @@
+//
+//  GeneratingView.swift
+//  aiGeneratorTestTask
+//
+//
+
 import SwiftUI
 
 struct GeneratingView: View {
+    
     @State private var isPulsing = false
     @State private var isRotating = false
 
     var body: some View {
-        VStack(spacing: 32) {
-            Spacer()
+        VStack(spacing: 40) {
             orbView
+            
             VStack(spacing: 8) {
                 Text("Generating...")
-                    .font(.title3.weight(.semibold))
-                    .foregroundStyle(.white)
+                    .font(.system(size: 20, weight: .bold))
                 Text("We're creating the best result for you")
-                    .font(.subheadline)
-                    .foregroundStyle(.white.opacity(0.45))
+                    .font(.system(size: 16, weight: .regular))
+                    .opacity(0.6)
             }
-            Spacer()
+            .foregroundStyle(.accent)
         }
+        .frame(maxHeight: .infinity)
         .onAppear {
             withAnimation(.easeInOut(duration: 1.6).repeatForever(autoreverses: true)) {
                 isPulsing = true
@@ -36,7 +43,7 @@ struct GeneratingView: View {
                     .fill(
                         RadialGradient(
                             colors: [
-                                Color(red: 0.85, green: 0.65, blue: 0.9).opacity(0.15 - Double(i) * 0.04),
+                                Color.lightPink.opacity(0.15 - Double(i) * 0.04),
                                 .clear
                             ],
                             center: .center,
@@ -53,9 +60,9 @@ struct GeneratingView: View {
                 .fill(
                     LinearGradient(
                         colors: [
-                            Color(red: 0.90, green: 0.75, blue: 0.95),
-                            Color(red: 0.70, green: 0.55, blue: 0.85),
-                            Color(red: 0.55, green: 0.40, blue: 0.75)
+                            Color.lightPink,
+                            Color.lightPink.opacity(0.8),
+                            Color.lightPink.opacity(0.6)
                         ],
                         startPoint: .topLeading,
                         endPoint: .bottomTrailing
@@ -69,7 +76,7 @@ struct GeneratingView: View {
             Circle()
                 .fill(
                     EllipticalGradient(
-                        colors: [.white.opacity(0.35), .clear],
+                        colors: [.card.opacity(0.35), .clear],
                         center: .init(x: 0.35, y: 0.3),
                         startRadiusFraction: 0,
                         endRadiusFraction: 0.55

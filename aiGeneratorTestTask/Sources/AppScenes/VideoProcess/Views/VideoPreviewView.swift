@@ -1,7 +1,13 @@
+//
+//  VideoPreviewView.swift
+//  aiGeneratorTestTask
+//
+
 import SwiftUI
 import AVKit
 
 struct VideoPreviewView: View {
+    
     let url: URL
 
     @State private var thumbnail: UIImage?
@@ -15,12 +21,10 @@ struct VideoPreviewView: View {
         .clipShape(RoundedRectangle(cornerRadius: 20, style: .continuous))
         .task { await generateThumbnail() }
         .fullScreenCover(isPresented: $isPlaying) {
-            FullScreenVideoPlayer(url: url)
+            VideoPlayerView(url: url)
                 .ignoresSafeArea()
         }
     }
-
-    // MARK: - Thumbnail
 
     @ViewBuilder
     private var thumbnailLayer: some View {
@@ -30,26 +34,21 @@ struct VideoPreviewView: View {
                 .scaledToFill()
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
         } else {
-            Color(white: 0.12)
+            Color.card.opacity(0.6)
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
         }
     }
-
-    // MARK: - Play button
 
     private var playButton: some View {
         Button {
             isPlaying = true
         } label: {
-            Image(systemName: "play.fill")
-                .font(.system(size: 36))
-                .foregroundStyle(.white)
-                .padding(24)
-                .background(Circle().fill(Color.black.opacity(0.45)))
+            Image(.Images.Common.Icons.play)
+                .resizable()
+                .frame(width: 80, height: 80)
+                .scaledToFit()
         }
     }
-
-    // MARK: - Thumbnail generation
 
     private func generateThumbnail() async {
         let asset = AVURLAsset(url: url)

@@ -7,191 +7,88 @@
 import SwiftUI
 
 struct VideoResultView: View {
-    var result: VideoGenerationResult? = nil
-    var error: VideoGenerationError? = nil
-    let onReplace: () -> Void
-
+    
+    var result: Result<VideoGenerationResult, VideoGenerationError>
+    
+    let onReplace: () -> ()
+    let onCancel: (() -> ())?
+    
     @State private var showDownloadConfirmation = false
-
+    
     var body: some View {
-        VStack(spacing: 0) {
-            videoArea
-                .padding(.top, 8)
-
-            Spacer()
-
-            if let error {
-                errorBanner(error)
-                    .padding(.horizontal, 16)
-                    .padding(.bottom, 24)
-            } else {
+        VStack(spacing: 16) {
+            switch result {
+            case .success(let success):
+                VideoPreviewView(url: success.videoURL)
+                    .overlay(alignment: .topTrailing) {
+                        replaceButton
+                    }
                 actionBar
-                    .padding(.horizontal, 16)
-                    .padding(.bottom, 32)
+                
+            case .failure(let failure):
+                ErrorView(error: failure, retryAction: onReplace, cancelAction: {
+                    onCancel?()
+                })
+                .padding(.bottom, 40)
             }
         }
+        .padding(.horizontal, 16)
+        .frame(maxHeight: .infinity)
     }
-
-    // MARK: - Video / error area
-
-    private var videoArea: some View {
-        ZStack(alignment: .topTrailing) {
-            ZStack {
-                RoundedRectangle(cornerRadius: 20, style: .continuous)
-                    .fill(Color(white: 0.10))
-
-                if error != nil {
-                    // Error state — show icon instead of video
-                    VStack(spacing: 12) {
-                        Image(systemName: "exclamationmark.triangle.fill")
-                            .font(.system(size: 48))
-                            .foregroundStyle(.orange)
-                        Text("Generation failed")
-                            .font(.headline)
-                            .foregroundStyle(.white)
-                    }
-                } else {
-                    // Success state — video placeholder with play button
-                    // Replace this ZStack with a real AVPlayer view when wiring up
-                    ZStack {
-                        RoundedRectangle(cornerRadius: 20, style: .continuous)
-                            .fill(
-                                LinearGradient(
-                                    colors: [Color(white: 0.22), Color(white: 0.06)],
-                                    startPoint: .top,
-                                    endPoint: .bottom
-                                )
-                            )
-                        Image(systemName: "play.fill")
-                            .font(.system(size: 44))
-                            .foregroundStyle(.white.opacity(0.85))
-                            .padding(24)
-                            .background(Circle().fill(Color.white.opacity(0.15)))
-                    }
-                }
-            }
-            .frame(maxWidth: .infinity)
-            .frame(height: 420)
-            .clipShape(RoundedRectangle(cornerRadius: 20, style: .continuous))
-            .padding(.horizontal, 16)
-
-            // Replace button (only on success)
-            if error == nil {
-                replaceButton
-                    .padding(.top, 12)
-                    .padding(.trailing, 28)
-            }
-        }
-    }
-
+    
     private var replaceButton: some View {
         Button(action: onReplace) {
             HStack(spacing: 6) {
                 Image(systemName: "arrow.triangle.2.circlepath")
-                    .font(.caption.weight(.semibold))
+                    .font(.subheadline.weight(.bold))
+                
                 Text("Replace")
-                    .font(.subheadline.weight(.semibold))
+                    .font(.system(size: 14, weight: .regular))
             }
-            .foregroundStyle(.white)
-            .padding(.horizontal, 14)
+            .foregroundStyle(.accent)
+            .padding(.horizontal, 12)
             .padding(.vertical, 8)
             .background(
                 Capsule()
-                    .fill(Color(white: 0.18).opacity(0.9))
+                    .fill(Color.card.opacity(0.4))
             )
+            .padding(.top, 16)
+            .padding(.trailing, 16)
         }
     }
-
-    // MARK: - Action bar (success)
-
+    
     private var actionBar: some View {
-        HStack(spacing: 12) {
+        HStack(spacing: 16) {
             Button {
                 shareVideo()
             } label: {
                 Text("Share")
-                    .font(.headline)
-                    .foregroundStyle(.white)
+                    .font(.system(size: 16, weight: .semibold))
+                    .foregroundStyle(.accent)
                     .frame(maxWidth: .infinity)
                     .padding(.vertical, 16)
                     .background(
-                        RoundedRectangle(cornerRadius: 14, style: .continuous)
-                            .fill(Color(white: 0.14))
+                        RoundedRectangle(cornerRadius: 24, style: .continuous)
+                            .fill(Color.card.opacity(0.6))
                     )
             }
-
+            
             Button {
                 downloadVideo()
             } label: {
                 Text("Download")
-                    .font(.headline)
-                    .foregroundStyle(.white)
-                    .frame(maxWidth: .infinity)
-                    .padding(.vertical, 16)
-                    .background(
-                        RoundedRectangle(cornerRadius: 14, style: .continuous)
-                            .fill(
-                                LinearGradient(
-                                    colors: [
-                                        Color(red: 0.65, green: 0.78, blue: 0.95),
-                                        Color(red: 0.95, green: 0.55, blue: 0.75)
-                                    ],
-                                    startPoint: .leading,
-                                    endPoint: .trailing
-                                )
-                            )
-                    )
+                    .asGradientButton()
             }
         }
         .alert("Saved to Photos", isPresented: $showDownloadConfirmation) {
             Button("OK", role: .cancel) {}
         }
     }
-
-    // MARK: - Error banner (failure)
-
-    private func errorBanner(_ error: VideoGenerationError) -> some View {
-        VStack(spacing: 16) {
-            Text(error.errorDescription ?? "Unknown error")
-                .font(.subheadline)
-                .foregroundStyle(.white.opacity(0.8))
-                .multilineTextAlignment(.center)
-
-            Button(action: onReplace) {
-                Text("Try Again")
-                    .font(.headline)
-                    .foregroundStyle(.white)
-                    .frame(maxWidth: .infinity)
-                    .padding(.vertical, 16)
-                    .background(
-                        RoundedRectangle(cornerRadius: 14, style: .continuous)
-                            .fill(
-                                LinearGradient(
-                                    colors: [
-                                        Color(red: 0.65, green: 0.78, blue: 0.95),
-                                        Color(red: 0.95, green: 0.55, blue: 0.75)
-                                    ],
-                                    startPoint: .leading,
-                                    endPoint: .trailing
-                                )
-                            )
-                    )
-            }
-        }
-        .padding(20)
-        .background(
-            RoundedRectangle(cornerRadius: 16, style: .continuous)
-                .fill(Color(white: 0.10))
-        )
-    }
-
-    // MARK: - Actions
-
+    
     private func shareVideo() {
-        guard let urlString = result?.videoURL,
-              let url = URL(string: urlString) else { return }
+        guard case .success(let result) = result else { return }
         
-        let av = UIActivityViewController(activityItems: [url], applicationActivities: nil)
+        let av = UIActivityViewController(activityItems: [result.videoURL], applicationActivities: nil)
         
         UIApplication.shared.connectedScenes
             .compactMap { $0 as? UIWindowScene }
@@ -199,30 +96,87 @@ struct VideoResultView: View {
             .rootViewController?
             .present(av, animated: true)
     }
-
+    
     private func downloadVideo() {
-        // Wire up real PHPhotoLibrary save here
         showDownloadConfirmation = true
     }
 }
 
+// MARK: - Error View
+
+private extension VideoResultView {
+    struct ErrorView: View {
+        
+        let error: VideoGenerationError
+        
+        var retryAction: () -> ()
+        var cancelAction: () -> ()
+        
+        var body: some View {
+            VStack(spacing: 16) {
+                VStack(spacing: 12) {
+                    Image(systemName: "exclamationmark.triangle.fill")
+                        .font(.system(size: 48))
+                        .foregroundStyle(.lightPink)
+                    
+                    Text("Generation failed")
+                        .font(.headline)
+                        .foregroundStyle(.white)
+                }
+                
+                Text(error.errorDescription ?? "Unknown error")
+                    .font(.subheadline)
+                    .foregroundStyle(.white.opacity(0.8))
+                    .multilineTextAlignment(.center)
+                
+                VStack(spacing: 8) {
+                    Button(action: retryAction) {
+                        Text("Try Again")
+                            .asGradientButton()
+                    }
+                    
+                    Button(action: cancelAction) {
+                        Text("Cancel")
+                            .asCardButton()
+                    }
+                }
+            }
+            .padding(16)
+            .background(
+                RoundedRectangle(cornerRadius: 16, style: .continuous)
+                    .fill(.card)
+            )
+        }
+    }
+}
+
 #Preview("Success") {
-    ZStack {
-        Color.black.ignoresSafeArea()
+    VStack {
+        NavigationBarView {
+            Text("Result")
+                .asNavigationTitle()
+        }
         
         VideoResultView(
-            result: VideoGenerationResult(templateTitle: "Clay Fool", videoURL: ""),
-            onReplace: {}
+            result: .success(VideoGenerationResult(
+                templateTitle: "Clay Fool",
+                videoURL: URL(string: "https://devstreaming-cdn.apple.com/videos/streaming/examples/bipbop_4x3/bipbop_4x3_variant.m3u8")!)),
+            onReplace: {},
+            onCancel: {}
         )
     }
-    .preferredColorScheme(.dark)
+    .background(Color.background)
 }
 
 #Preview("Error") {
-    ZStack {
-        Color.black.ignoresSafeArea()
+    VStack {
+        NavigationBarView { Text("Result") }
         
-        VideoResultView(error: .serverError(code: 500), onReplace: {})
+        VideoResultView(
+            result: .failure(.serverError(code: 500)),
+            onReplace: {},
+            onCancel: {}
+        )
     }
-    .preferredColorScheme(.dark)
+    .background(.blue)
 }
