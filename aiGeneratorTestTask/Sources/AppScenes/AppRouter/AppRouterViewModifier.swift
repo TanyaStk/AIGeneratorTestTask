@@ -36,9 +36,9 @@ private extension AppRouterViewModifier {
         case .templateDetail(selected: let selected, all: let all):
             VideoTemplateDetailView(viewModel: VideoTemplateDetailViewModel(selected: selected, all: all))
         case .videoProcess(request: let request):
-            VideoProcessView(viewModel: VideoProcessViewModel(request: request, service: MockVideoGenerationService()))
+            VideoProcessView(viewModel: .init(request: request))
         case .videoHistory:
-            VideoGenerationHistoryView()
+            VideoHistoryView(viewModel: .init())
         case .chatHistory:
             ChatHistoryView()
         }
