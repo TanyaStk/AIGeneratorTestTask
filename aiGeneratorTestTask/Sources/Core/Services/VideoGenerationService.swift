@@ -17,13 +17,13 @@ enum VideoGenerationError: LocalizedError, Hashable {
     
     var errorDescription: String? {
         switch self {
-        case .networkFailure: 
+        case .networkFailure:
             "No internet connection. Please try again."
-        case .serverError(let code): 
+        case .serverError(let code):
             "Server returned an error (\(code)). Try again later."
-        case .timeout: 
+        case .timeout:
             "Generation took too long. Please try again."
-        case .unknown: 
+        case .unknown:
             "Something went wrong. Please try again."
         }
     }
@@ -40,7 +40,7 @@ struct MockVideoGenerationService: VideoGenerationService {
         if Double.random(in: 0...1) <= successRate {
             return VideoGenerationResult(
                 templateTitle: request.templateTitle,
-                videoURL: "https://mock.example.com/video/\(request.templateId).mp4"
+                videoURL: URL(string: "https://devstreaming-cdn.apple.com/videos/streaming/examples/bipbop_4x3/bipbop_4x3_variant.m3u8")!
             )
         } else {
             let errors: [VideoGenerationError] = [
