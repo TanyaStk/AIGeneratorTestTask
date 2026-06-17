@@ -12,7 +12,7 @@ import Combine
 final class VideoTemplateDetailViewModel: ObservableObject {
     
     @Published var state: State
-
+    
     init(selected: VideoTemplate, all: [VideoTemplate]) {
         self.state = .init(
             templates: all,
@@ -22,26 +22,23 @@ final class VideoTemplateDetailViewModel: ObservableObject {
         )
     }
     
-    func tapSlot(index: Int) {
-        state.pickingSlotIndex = index
-        state.showPhotoPicker = true
-    }
-
     func didPickImage(_ image: UIImage, slotIndex: Int) {
-        var slots = state.photoSlots[state.currentTemplate.id] ?? [:]
-        
-        slots[slotIndex] = image
-        state.photoSlots[state.currentTemplate.id] = slots
+        setSlot(.filled(image, deleteAction: { [weak self] in
+            self?.removeImage(slotIndex: slotIndex)
+        }), at: slotIndex)
     }
-
-    func removeImage(slotIndex: Int) {
-        state.photoSlots[state.currentTemplate.id]?[slotIndex] = nil
+    
+    func slotState(for index: Int) -> PhotoSlotState {
+        state.photoSlots[state.currentTemplate.id]?[index] ??
+            .empty(loadAction: { [weak self] in
+                self?.tapSlot(index: index)
+            })
     }
-
-    func image(for slotIndex: Int) -> UIImage? {
-        state.photoSlots[state.currentTemplate.id]?[slotIndex]
+    
+    func didStartPicking(slotIndex: Int) {
+        setSlot(.loading, at: slotIndex)
     }
-
+    
     func onTemplateChanged() {
         if !state.currentTemplate.availableFormats.contains(state.selectedFormat) {
             state.selectedFormat = state.currentTemplate.availableFormats.first ?? "16:9"
@@ -50,9 +47,32 @@ final class VideoTemplateDetailViewModel: ObservableObject {
             state.selectedQuality = state.currentTemplate.availableQualities.first ?? "1080p"
         }
     }
+    
+    func setupRequest() -> VideoGenerationRequest {
+        let request = VideoGenerationRequest(
+            templateId: state.currentTemplate.id,
+            templateTitle: state.currentTemplate.title,
+            photoSlotCount: state.currentTemplate.photoSlotCount
+        )
+        
+        return request
+    }
+}
 
-    func createTapped() {
-        // Hook up generation logic here
+private extension VideoTemplateDetailViewModel {
+    func setSlot(_ photoSlotState: PhotoSlotState, at index: Int) {
+        var slots = state.photoSlots[state.currentTemplate.id] ?? [:]
+        slots[index] = photoSlotState
+        state.photoSlots[state.currentTemplate.id] = slots
+    }
+    
+    func removeImage(slotIndex: Int) {
+        state.photoSlots[state.currentTemplate.id]?[slotIndex] = nil
+    }
+    
+    func tapSlot(index: Int) {
+        state.pickingSlotIndex = index
+        state.showPhotoPicker = true
     }
 }
 
@@ -60,7 +80,7 @@ extension VideoTemplateDetailViewModel {
     struct State {
         var templates: [VideoTemplate]
         var currentIndex: Int
-        var photoSlots: [UUID: [Int: UIImage]] = [:]
+        var photoSlots: [UUID: [Int: PhotoSlotState]] = [:]
         var selectedFormat: String
         var selectedQuality: String
         var pickingSlotIndex: Int? = nil
@@ -72,8 +92,16 @@ extension VideoTemplateDetailViewModel {
         
         var isCreateEnabled: Bool {
             let slots = photoSlots[currentTemplate.id] ?? [:]
+            let isAllSlotsFilled = slots.values.allSatisfy {
+                if case .filled = $0 {
+                    return true
+                } else {
+                    return false
+                }
+            }
             
-            return slots.count == currentTemplate.photoSlotCount
+            return slots.count == currentTemplate.photoSlotCount && isAllSlotsFilled
+            
         }
     }
 }

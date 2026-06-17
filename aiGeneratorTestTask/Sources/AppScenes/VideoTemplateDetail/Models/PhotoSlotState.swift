@@ -7,7 +7,7 @@
 import UIKit
 
 enum PhotoSlotState {
-    case empty
+    case empty(loadAction: () -> ())
     case loading
-    case filled(UIImage)
+    case filled(UIImage, deleteAction: () -> ())
 }

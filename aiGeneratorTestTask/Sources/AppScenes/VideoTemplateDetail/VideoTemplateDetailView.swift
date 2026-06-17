@@ -14,8 +14,7 @@ struct VideoTemplateDetailView: View {
         VStack(spacing: 8) {
             NavigationBarView {
                 Text(viewModel.state.currentTemplate.title)
-                    .font(.system(size: 20, weight: .bold))
-                    .foregroundStyle(.accent)
+                    .asNavigationTitle()
             }
             
             TabView(selection: $viewModel.state.currentIndex) {
@@ -41,6 +40,9 @@ struct VideoTemplateDetailView: View {
                 PhotoPickerView { image in
                     viewModel.didPickImage(image, slotIndex: slotIndex)
                 }
+                .onAppear {
+                    viewModel.didStartPicking(slotIndex: slotIndex)
+                }
             }
         }
     }
@@ -64,32 +66,10 @@ struct VideoTemplateDetailView: View {
     private func photoSlotsSection(_ template: VideoTemplate) -> some View {
         HStack(spacing: 24) {
             ForEach(0..<template.photoSlotCount, id: \.self) { slot in
-                photoSlotView(slotIndex: slot, templateId: template.id)
+                PhotoSlotStateView(state: viewModel.slotState(for: slot))
             }
             
             Spacer()
-        }
-    }
-    
-    @ViewBuilder
-    private func photoSlotView(slotIndex: Int, templateId: UUID) -> some View {
-        if let image = viewModel.image(for: slotIndex) {
-            ImageWithDeleteButton(image: image) {
-                viewModel.removeImage(slotIndex: slotIndex)
-            }
-        } else {
-            Button {
-                viewModel.tapSlot(index: slotIndex)
-            } label: {
-                RoundedRectangle(cornerRadius: 16, style: .continuous)
-                    .strokeBorder(BluePinkGradientStyle(), lineWidth: 1)
-                    .frame(width: 100, height: 100)
-                    .overlay {
-                        Image(systemName: "plus")
-                            .font(.title2.weight(.light))
-                            .foregroundStyle(.accent)
-                    }
-            }
         }
     }
     
@@ -113,16 +93,11 @@ struct VideoTemplateDetailView: View {
     
     private var createButton: some View {
         Button {
-            viewModel.createTapped()
+            let request = viewModel.setupRequest()
+            router.push(.videoProcess(request: request))
         } label: {
             Text("Create")
-                .font(.system(size: 16, weight: .semibold))
-                .foregroundStyle(viewModel.state.isCreateEnabled ? .accent : .accent.opacity(0.3))
-                .frame(maxWidth: .infinity)
-                .padding(.vertical, 16)
-                .background(createButtonBackground)
-                .clipShape(.rect(cornerRadius: 24, style: .continuous))
-                .padding(.horizontal, 16)
+                .asGradientButton(viewModel.state.isCreateEnabled)
         }
         .disabled(!viewModel.state.isCreateEnabled)
     }
