@@ -40,7 +40,7 @@ struct MockVideoGenerationService: VideoGenerationService {
         if Double.random(in: 0...1) <= successRate {
             return VideoGenerationResult(
                 templateTitle: request.templateTitle,
-                videoURL: URL(string: "https://devstreaming-cdn.apple.com/videos/streaming/examples/bipbop_4x3/bipbop_4x3_variant.m3u8")!
+                videoURL: Bundle.main.url(forResource: "testVideo", withExtension: ".mp4")!
             )
         } else {
             let errors: [VideoGenerationError] = [
