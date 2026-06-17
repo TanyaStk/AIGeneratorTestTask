@@ -32,6 +32,7 @@ struct VideoTemplateDetailView: View {
             
             createButton
                 .padding(.bottom, 16)
+                .padding(.horizontal, 16)
         }
         .frame(maxHeight: .infinity)
         .background(Color.background, ignoresSafeAreaEdges: .all)

@@ -34,8 +34,6 @@ final class VideoProcessViewModel: ObservableObject {
             state = .result(.success(result))
         } catch is CancellationError {
             print("Task is Cancelled")
-            
-            return
         } catch let error as VideoGenerationError {
             guard !Task.isCancelled else { return }
             
