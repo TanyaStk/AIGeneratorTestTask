@@ -9,7 +9,7 @@ protocol VideoGenerationService {
     func generate(request: VideoGenerationRequest) async throws -> VideoGenerationResult
 }
 
-enum VideoGenerationError: LocalizedError, Hashable {
+enum VideoGenerationError: LocalizedError, Equatable {
     case networkFailure
     case serverError(code: Int)
     case timeout
