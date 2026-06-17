@@ -8,6 +8,7 @@ import SwiftUI
 struct GradientImageView: View {
     
     let image: ImageResource
+    let size: CGFloat
     
     var body: some View {
         Image(image)
@@ -15,10 +16,10 @@ struct GradientImageView: View {
             .renderingMode(.template)
             .foregroundStyle(BluePinkGradientStyle())
             .scaledToFit()
+            .frame(width: size, height: size)
     }
 }
 
 #Preview {
-    GradientImageView(image: .Images.Common.Icons.magicPencil)
-        .frame(width: 24, height: 24)
+    GradientImageView(image: .Images.Common.Icons.magicPencil, size: 24)
 }

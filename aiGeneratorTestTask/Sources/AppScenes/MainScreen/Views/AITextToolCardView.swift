@@ -24,8 +24,7 @@ struct AITextToolCardView: View {
     }
     
     private var iconBadge: some View {
-        GradientImageView(image: tool.image)
-            .frame(width: 20, height: 20)
+        GradientImageView(image: tool.image, size: 20)
             .padding(8)
             .background(
                 Circle().fill(.accent.opacity(0.05))

@@ -23,8 +23,7 @@ extension VideoTemplateDetailView {
                     Button {
                         deleteAction?()
                     } label: {
-                        GradientImageView(image: .Images.Common.Icons.xMark)
-                            .frame(width: 24, height: 24)
+                        GradientImageView(image: .Images.Common.Icons.xMark, size: 24)
                             .padding(4)
                             .background(
                                 Circle().fill(.accent)
