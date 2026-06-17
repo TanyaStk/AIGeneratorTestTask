@@ -1,34 +1,62 @@
+//
+//  VideoProcessView.swift
+//  aiGeneratorTestTask
+//
+
 import SwiftUI
 
 struct VideoProcessView: View {
+    
     @StateObject var viewModel: VideoProcessViewModel
+    
     @EnvironmentObject private var router: AppRouter
-
+    
     var body: some View {
-        ZStack {
-            Color.black.ignoresSafeArea()
-            switch viewModel.state {
-            case .generating:
-                GeneratingView()
-            case .success(let result):
-                ResultView(result: result, onReplace: { viewModel.retry() })
-            case .failure(let error):
-                ResultView(error: error, onReplace: { viewModel.retry() })
+        VStack {
+            NavigationBarView {
+                Text(titleForState)
+                    .asNavigationTitle()
             }
+            
+            bodyView
         }
-        .navigationBarTitleDisplayMode(.inline)
-        .navigationTitle(titleForState)
-        .navigationBarBackButtonHidden(false)
-        .toolbarBackground(Color.black, for: .navigationBar)
-        .toolbarBackground(.visible, for: .navigationBar)
-        .toolbarColorScheme(.dark, for: .navigationBar)
-        .task { await viewModel.startGeneration() }
+        .frame(maxWidth: .infinity)
+        .background(Color.background)
+        .animation(.linear, value: viewModel.state)
+        .task(id: viewModel.retryToken) {
+            await viewModel.startGeneration()
+        }
     }
-
+    
+    @ViewBuilder
+    private var bodyView: some View {
+        switch viewModel.state {
+        case .generating:
+            GeneratingView()
+        case .result(let result):
+            VideoResultView(
+                result: result,
+                onReplace: viewModel.retry,
+                onCancel: router.popToRoot
+            )
+            .transition(.move(edge: .bottom))
+        }
+    }
+    
     private var titleForState: String {
         switch viewModel.state {
-        case .generating: return ""
-        case .success, .failure: return "Result"
+        case .generating:
+            ""
+        case .result:
+            "Result"
         }
     }
+}
+
+#Preview {
+    VideoProcessView(viewModel: VideoProcessViewModel(
+        request: .init(templateId: UUID(), templateTitle: "Template", photoSlotCount: 1),
+        service: MockVideoGenerationService())
+    )
+    .embedRouter()
 }
