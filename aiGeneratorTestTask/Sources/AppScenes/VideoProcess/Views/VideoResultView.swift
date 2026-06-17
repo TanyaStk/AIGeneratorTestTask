@@ -80,8 +80,10 @@ struct VideoResultView: View {
                     .asGradientButton()
             }
         }
-        .alert("Saved to Photos", isPresented: $showDownloadConfirmation) {
-            Button("OK", role: .cancel) {}
+        .alert("Saved to Photos", isPresented: $showDownloadConfirmation) { // TODO: - Replace on custom view
+            Button("OK", role: .cancel) {
+                
+            }
         }
     }
     
@@ -97,7 +99,7 @@ struct VideoResultView: View {
             .present(av, animated: true)
     }
     
-    private func downloadVideo() {
+    private func downloadVideo() { // TODO: - Handle download and show permission on write
         showDownloadConfirmation = true
     }
 }

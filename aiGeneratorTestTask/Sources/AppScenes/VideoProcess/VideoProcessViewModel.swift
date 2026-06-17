@@ -14,23 +14,27 @@ final class VideoProcessViewModel: ObservableObject {
         case result(Result<VideoGenerationResult, VideoGenerationError>)
     }
     
+    @Injected(\.videoGenerationService) private var networkService
+    @Injected(\.videoHistoryRepository) private var historyRepository
+    @Injected(\.videoFileManager) private var fileManager
+    
     @Published private(set) var state: State = .generating
     @Published private(set) var retryToken = UUID()
     
     private let request: VideoGenerationRequest
-    private let service: VideoGenerationService
     
-    init(request: VideoGenerationRequest,
-         service: VideoGenerationService) {
+    init(request: VideoGenerationRequest) {
         self.request = request
-        self.service = service
     }
     
     func startGeneration() async {
         do {
-            let result = try await service.generate(request: request)
-            guard !Task.isCancelled else { return }
+            let result = try await networkService.generate(request: request)
             
+            try await saveGeneratedVideo(sourceURL: result.videoURL)
+            
+            guard !Task.isCancelled else { return }
+
             state = .result(.success(result))
         } catch is CancellationError {
             print("Task is Cancelled")
@@ -48,5 +52,17 @@ final class VideoProcessViewModel: ObservableObject {
     func retry() {
         state = .generating
         retryToken = UUID()
+    }
+}
+
+private extension VideoProcessViewModel {
+    func saveGeneratedVideo(sourceURL: URL) async throws {
+        let videoFileName = try fileManager.saveVideo(from: sourceURL)
+        let thumbFileName = await fileManager.generateThumbnail(for: videoFileName)
+        
+        _ = try historyRepository.save(
+            videoFileName: videoFileName,
+            thumbnailFileName: thumbFileName
+        )
     }
 }

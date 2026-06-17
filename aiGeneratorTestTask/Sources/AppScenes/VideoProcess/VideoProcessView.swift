@@ -54,9 +54,8 @@ struct VideoProcessView: View {
 }
 
 #Preview {
-    VideoProcessView(viewModel: VideoProcessViewModel(
-        request: .init(templateId: UUID(), templateTitle: "Template", photoSlotCount: 1),
-        service: MockVideoGenerationService())
-    )
+    VideoProcessView(viewModel: .init(
+        request: .init(templateId: UUID(), templateTitle: "Template", photoSlotCount: 1)
+    ))
     .embedRouter()
 }
