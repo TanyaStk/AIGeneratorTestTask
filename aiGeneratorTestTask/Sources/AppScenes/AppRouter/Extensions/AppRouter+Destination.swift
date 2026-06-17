@@ -12,11 +12,8 @@ extension AppRouter {
         case photoToVideoGeneration
         case aiChat
         case templateDetail(selected: VideoTemplate, all: [VideoTemplate])
-        case history(type: HistoryType)
-    }
-    
-    enum HistoryType {
-        case chat
-        case video
+        case videoProcess(request: VideoGenerationRequest)
+        case videoHistory
+        case chatHistory
     }
 }
