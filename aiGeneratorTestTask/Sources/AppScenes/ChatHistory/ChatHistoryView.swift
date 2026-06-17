@@ -2,8 +2,6 @@
 //  ChatHistoryView.swift
 //  aiGeneratorTestTask
 //
-//  Created by Sanya Tamostroenko on 17.06.26.
-//
 
 import SwiftUI
 
