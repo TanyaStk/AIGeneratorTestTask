@@ -22,7 +22,7 @@ struct VideoGenerationView: View {
                 titleView
             } rightContent: {
                 Button {
-                    router.push(.history(type: .video))
+                    router.push(.videoHistory)
                 } label: {
                     Image(.Images.Common.Icons.reload)
                 }
@@ -99,8 +99,7 @@ struct VideoGenerationView: View {
                 )
             
             Text("AI Video")
-                .font(.system(size: 20, weight: .semibold))
-                .foregroundStyle(.accent)
+                .asNavigationTitle()
         }
         .frame(maxWidth: .infinity, alignment: .leading)
         .padding(.leading, 72)
