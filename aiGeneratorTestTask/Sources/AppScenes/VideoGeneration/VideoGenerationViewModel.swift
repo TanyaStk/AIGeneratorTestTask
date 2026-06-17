@@ -8,13 +8,9 @@ import Combine
 
 final class VideoGenerationViewModel: ObservableObject {
     
+    @Injected(\.videoTemplateProvider) private var service
+    
     @Published private(set) var state = State()
-
-    private let service: VideoTemplateProvider
-
-    init(service: VideoTemplateProvider = MockVideoTemplateService()) {
-        self.service = service
-    }
 
     func onAppear() async {
         guard state.categories.isEmpty else { return }
@@ -53,10 +49,6 @@ final class VideoGenerationViewModel: ObservableObject {
         Task {
             await loadTemplates()
         }
-    }
-
-    func templateTapped(_ template: VideoTemplate) {
-        
     }
 }
 

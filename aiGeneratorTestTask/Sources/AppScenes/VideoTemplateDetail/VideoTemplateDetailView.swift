@@ -114,11 +114,14 @@ struct VideoTemplateDetailView: View {
 }
 
 #Preview {
+    InjectedValues.setupForPreviews()
+    
     let templates = (1...6).map {
         VideoTemplate(title: "Template \($0)", categoryName: "Popular", photoSlotCount: $0 % 2 + 1)
     }
     
-    VideoTemplateDetailView(
+    return VideoTemplateDetailView(
         viewModel: VideoTemplateDetailViewModel(selected: templates[0], all: templates)
     )
+    .embedRouter()
 }
