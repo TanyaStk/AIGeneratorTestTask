@@ -2,17 +2,26 @@
 //  NavigationTitleModifier.swift
 //  aiGeneratorTestTask
 //
-//  Created by Sanya Tamostroenko on 17.06.26.
-//
 
 import SwiftUI
 
-struct NavigationTitleModifier: View {
-    var body: some View {
-        Text(/*@START_MENU_TOKEN@*/"Hello, World!"/*@END_MENU_TOKEN@*/)
+private struct NavigationTitleModifier: ViewModifier {
+    
+    func body(content: Content) -> some View {
+        content
+            .font(.system(size: 20, weight: .semibold))
+            .foregroundStyle(.accent)
+    }
+}
+
+extension View {
+    func asNavigationTitle() -> some View {
+        modifier(NavigationTitleModifier())
     }
 }
 
 #Preview {
-    NavigationTitleModifier()
+    Text("NavigationTitleModifier")
+        .asNavigationTitle()
+        .background(.black)
 }
