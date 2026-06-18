@@ -10,6 +10,7 @@ import SwiftUI
 final class AppRouter: ObservableObject {
     
     @Published var path = NavigationPath()
+    @Published var shouldShowPaywall = false
     
     func push(_ route: Destination) {
         path.append(route)
@@ -27,5 +28,9 @@ final class AppRouter: ObservableObject {
     
     func popToRoot() {
         path.removeLast(path.count)
+    }
+    
+    func togglePaywallVisibility() {
+        shouldShowPaywall.toggle()
     }
 }

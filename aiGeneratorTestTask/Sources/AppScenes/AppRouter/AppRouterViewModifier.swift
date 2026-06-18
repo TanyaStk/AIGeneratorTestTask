@@ -19,6 +19,11 @@ struct AppRouterViewModifier: ViewModifier {
                         .toolbar(.hidden, for: .navigationBar)
                         .environmentObject(router)
                 }
+                .fullScreenCover(isPresented: $router.shouldShowPaywall) {
+                    PaywallView(viewModel: .init(completion: {
+                        router.togglePaywallVisibility()
+                    }))
+                }
         }
     }
 }
