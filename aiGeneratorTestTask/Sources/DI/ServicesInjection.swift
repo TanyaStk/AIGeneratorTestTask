@@ -32,6 +32,11 @@ extension InjectedValues {
         get { Self[VideoTemplateProviderKey.self] }
         set { Self[VideoTemplateProviderKey.self] = newValue }
     }
+    
+    var networkService: NetworkServiceType {
+        get { Self[NetworkServiceKey.self] }
+        set { Self[NetworkServiceKey.self] = newValue }
+    }
 }
 
 // MARK: - Injected values for preview
@@ -43,6 +48,7 @@ extension InjectedValues {
         InjectedValues[\.videoHistoryRepository] = MockVideoHistoryRepository()
         InjectedValues[\.chatHistoryRepository] = ChatHistoryRepository(context: context)
         InjectedValues[\.videoGenerationService] = MockVideoGenerationService(successRate: 1.0)
+        InjectedValues[\.videoTemplateProvider] = MockVideoTemplateService()
     }
 }
 
@@ -61,9 +67,13 @@ private struct VideoFileManagerKey: InjectionKey {
 }
 
 private struct VideoGenerationServiceKey: InjectionKey {
-    static var currentValue: VideoGenerationService = MockVideoGenerationService()
+    static var currentValue: VideoGenerationService = VideoGenerationAPIService(network: InjectedValues[\.networkService])
 }
 
 private struct VideoTemplateProviderKey: InjectionKey {
-    static var currentValue: VideoTemplateProvider = MockVideoTemplateService()
+    static var currentValue: VideoTemplateProvider = VideoTemplateService(network: InjectedValues[\.networkService])
+}
+
+private struct NetworkServiceKey: InjectionKey {
+    static var currentValue: NetworkServiceType = NetworkService()
 }
