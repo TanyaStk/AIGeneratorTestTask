@@ -45,7 +45,9 @@ struct VideoGenerationView: View {
     @ViewBuilder
     private var content: some View {
         if viewModel.state.isLoading && viewModel.state.templates.isEmpty {
-            ProgressView().tint(.accent)
+            ProgressView()
+            .scaleEffect(2)
+            .tint(.lightPink)
         } else {
             ScrollView {
                 LazyVGrid(columns: columns, spacing: 16) {
@@ -107,6 +109,8 @@ struct VideoGenerationView: View {
 }
 
 #Preview {
-    VideoGenerationView(viewModel: VideoGenerationViewModel())
+    InjectedValues.setupForPreviews()
+    
+    return VideoGenerationView(viewModel: VideoGenerationViewModel())
         .embedRouter()
 }
