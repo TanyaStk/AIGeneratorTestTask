@@ -37,6 +37,16 @@ extension InjectedValues {
         get { Self[NetworkServiceKey.self] }
         set { Self[NetworkServiceKey.self] = newValue }
     }
+    
+    var chatService: ChatServiceProvider {
+        get { Self[ChatServiceKey.self] }
+        set { Self[ChatServiceKey.self] = newValue }
+    }
+    
+    var apphudService: ApphudServiceType {
+        get { Self[ApphudServiceKey.self] }
+        set { Self[ApphudServiceKey.self] = newValue }
+    }
 }
 
 // MARK: - Injected values for preview
@@ -49,6 +59,7 @@ extension InjectedValues {
         InjectedValues[\.chatHistoryRepository] = ChatHistoryRepository(context: context)
         InjectedValues[\.videoGenerationService] = MockVideoGenerationService(successRate: 1.0)
         InjectedValues[\.videoTemplateProvider] = MockVideoTemplateService()
+        InjectedValues[\.chatService] = MockChatService()
     }
 }
 
@@ -76,4 +87,12 @@ private struct VideoTemplateProviderKey: InjectionKey {
 
 private struct NetworkServiceKey: InjectionKey {
     static var currentValue: NetworkServiceType = NetworkService()
+}
+
+private struct ChatServiceKey: InjectionKey {
+    static var currentValue: ChatServiceProvider = ChatAPIService(network: InjectedValues[\.networkService])
+}
+
+private struct ApphudServiceKey: InjectionKey {
+    static var currentValue: ApphudServiceType = ApphudService()
 }

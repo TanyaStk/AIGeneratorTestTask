@@ -12,6 +12,9 @@ struct aiGeneratorTestTaskApp: App {
     @AppStorage("userID")
     private var userID: String = ""
     
+    @Injected(\.apphudService)
+    private var apphudService
+    
     init() {
         setupApphud()
     }
@@ -25,7 +28,7 @@ struct aiGeneratorTestTaskApp: App {
     }
     
     private func setupApphud() {
-        Apphud.start(apiKey: "app_FmCjFTwjWpcLSafxT8vCDeVffJyfFS")
-        userID = Apphud.userID()
+        apphudService.start(with: AppConstants.Apphud.key)
+        userID = apphudService.getUserID()
     }
 }
