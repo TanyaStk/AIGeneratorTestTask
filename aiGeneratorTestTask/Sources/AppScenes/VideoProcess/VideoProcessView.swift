@@ -55,7 +55,14 @@ struct VideoProcessView: View {
 
 #Preview {
     VideoProcessView(viewModel: .init(
-        request: .init(templateId: UUID(), templateTitle: "Template", photoSlotCount: 1)
+        request: .init(
+            templateId: 0,
+            templateTitle: "template",
+            photoSlotCount: 1,
+            image: nil,
+            duration: 0,
+            quality: ""
+        )
     ))
     .embedRouter()
 }

@@ -17,8 +17,8 @@ final class VideoTemplateDetailViewModel: ObservableObject {
         self.state = .init(
             templates: all,
             currentIndex: all.firstIndex(of: selected) ?? 0,
-            selectedFormat: selected.availableFormats.first ?? "16:9",
-            selectedQuality: selected.availableQualities.first ?? "1080p"
+            selectedQuality: selected.availableQualities.first ?? "1080p",
+            selectedFormat: VideoFormat.horizontal.rawValue
         )
     }
     
@@ -40,19 +40,23 @@ final class VideoTemplateDetailViewModel: ObservableObject {
     }
     
     func onTemplateChanged() {
-        if !state.currentTemplate.availableFormats.contains(state.selectedFormat) {
-            state.selectedFormat = state.currentTemplate.availableFormats.first ?? "16:9"
-        }
         if !state.currentTemplate.availableQualities.contains(state.selectedQuality) {
             state.selectedQuality = state.currentTemplate.availableQualities.first ?? "1080p"
         }
     }
     
-    func setupRequest() -> VideoGenerationRequest {
+    func setupRequest() -> VideoGenerationRequest? {
+        guard case .filled(let image, _) = state.photoSlots[state.currentTemplate.id]?.first?.value else {
+            return nil
+        }
+        
         let request = VideoGenerationRequest(
             templateId: state.currentTemplate.id,
             templateTitle: state.currentTemplate.title,
-            photoSlotCount: state.currentTemplate.photoSlotCount
+            photoSlotCount: state.photoSlots.count,
+            image: image,
+            duration: 5,
+            quality: state.selectedQuality
         )
         
         return request
@@ -80,9 +84,9 @@ extension VideoTemplateDetailViewModel {
     struct State {
         var templates: [VideoTemplate]
         var currentIndex: Int
-        var photoSlots: [UUID: [Int: PhotoSlotState]] = [:]
-        var selectedFormat: String
+        var photoSlots: [Int: [Int: PhotoSlotState]] = [:]
         var selectedQuality: String
+        var selectedFormat: String
         var pickingSlotIndex: Int? = nil
         var showPhotoPicker = false
         
@@ -103,5 +107,11 @@ extension VideoTemplateDetailViewModel {
             return slots.count == currentTemplate.photoSlotCount && isAllSlotsFilled
             
         }
+    }
+    
+    enum VideoFormat: String, CaseIterable {
+        case horizontal = "16:9"
+        case vertical = "9:16"
+        case square = "1:1"
     }
 }

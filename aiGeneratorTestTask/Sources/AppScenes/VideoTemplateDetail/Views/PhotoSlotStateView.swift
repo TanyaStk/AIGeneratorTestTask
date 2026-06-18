@@ -40,7 +40,7 @@ extension VideoTemplateDetailView {
 
 #Preview {
     let templates = (1...6).map {
-        VideoTemplate(title: "Template \($0)", categoryName: "Popular", photoSlotCount: $0 % 2 + 1)
+        VideoTemplate(id: $0, title: "Template \($0)", categoryName: "Popular", availableQualities: [], previewURL: nil)
     }
     
     VideoTemplateDetailView(

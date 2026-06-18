@@ -27,7 +27,9 @@ final class VideoGenerationViewModel: ObservableObject {
             if state.selectedCategory == nil {
                 state.selectedCategory = fetched.first
             }
-        } catch {}
+        } catch {
+            // TODO: - Handle error
+        }
     }
 
     func loadTemplates() async {
@@ -38,7 +40,9 @@ final class VideoGenerationViewModel: ObservableObject {
         
         do {
             state.templates = try await service.fetchTemplates(for: selectedCategory)
-        } catch {}
+        } catch {
+            // TODO: - Handle error
+        }
     }
 
     func select(category: VideoCategory) {

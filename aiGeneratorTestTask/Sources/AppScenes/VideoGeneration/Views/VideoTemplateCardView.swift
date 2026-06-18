@@ -24,12 +24,3 @@ struct VideoTemplateCardView: View {
         }
     }
 }
-
-#Preview {
-    LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 16) {
-        VideoTemplateCardView(template: VideoTemplate(title: "TitleTitleTitleTitleTitleTitleTitle", categoryName: "Popular"))
-        VideoTemplateCardView(template: VideoTemplate(title: "Title", categoryName: "Popular"))
-    }
-    .padding()
-    .background(Color.black)
-}

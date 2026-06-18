@@ -8,7 +8,7 @@ import SwiftUI
 
 struct VideoResultView: View {
     
-    var result: Result<VideoGenerationResult, VideoGenerationError>
+    var result: Result<VideoGenerationResponse, VideoGenerationError>
     
     let onReplace: () -> ()
     let onCancel: (() -> ())?
@@ -160,7 +160,8 @@ private extension VideoResultView {
         }
         
         VideoResultView(
-            result: .success(VideoGenerationResult(
+            result: .success(VideoGenerationResponse(
+                id: 0,
                 templateTitle: "Clay Fool",
                 videoURL: URL(string: "https://devstreaming-cdn.apple.com/videos/streaming/examples/bipbop_4x3/bipbop_4x3_variant.m3u8")!)),
             onReplace: {},

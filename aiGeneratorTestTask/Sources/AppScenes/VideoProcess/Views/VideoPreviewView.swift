@@ -8,7 +8,7 @@ import AVKit
 
 struct VideoPreviewView: View {
     
-    let url: URL
+    let url: URL?
 
     @State private var thumbnail: UIImage?
     @State private var isPlaying = false
@@ -21,8 +21,10 @@ struct VideoPreviewView: View {
         .clipShape(RoundedRectangle(cornerRadius: 20, style: .continuous))
         .task { await generateThumbnail() }
         .fullScreenCover(isPresented: $isPlaying) {
-            VideoPlayerView(url: url)
-                .ignoresSafeArea()
+            if let url {
+                VideoPlayerView(url: url)
+                    .ignoresSafeArea()
+            }
         }
     }
 
@@ -51,6 +53,8 @@ struct VideoPreviewView: View {
     }
 
     private func generateThumbnail() async {
+        guard let url else { return }
+        
         let asset = AVURLAsset(url: url)
         let generator = AVAssetImageGenerator(asset: asset)
         generator.appliesPreferredTrackTransform = true

@@ -11,7 +11,7 @@ final class VideoProcessViewModel: ObservableObject {
     
     enum State: Equatable {
         case generating
-        case result(Result<VideoGenerationResult, VideoGenerationError>)
+        case result(Result<VideoGenerationResponse, VideoGenerationError>)
     }
     
     @Injected(\.videoGenerationService) private var networkService
@@ -31,7 +31,9 @@ final class VideoProcessViewModel: ObservableObject {
         do {
             let result = try await networkService.generate(request: request)
             
-            try await saveGeneratedVideo(sourceURL: result.videoURL)
+            if let videoURL = result.videoURL {
+                try await saveGeneratedVideo(sourceURL: videoURL)
+            }
             
             guard !Task.isCancelled else { return }
 

@@ -79,7 +79,7 @@ struct VideoTemplateDetailView: View {
             settingsRow(
                 label: "Format",
                 value: viewModel.state.selectedFormat,
-                options: viewModel.state.currentTemplate.availableFormats,
+                options: VideoTemplateDetailViewModel.VideoFormat.allCases.map { $0.rawValue },
                 selection: $viewModel.state.selectedFormat
             )
             
@@ -94,8 +94,9 @@ struct VideoTemplateDetailView: View {
     
     private var createButton: some View {
         Button {
-            let request = viewModel.setupRequest()
-            router.push(.videoProcess(request: request))
+            if let request = viewModel.setupRequest() {
+                router.push(.videoProcess(request: request))
+            }
         } label: {
             Text("Create")
                 .asGradientButton(viewModel.state.isCreateEnabled)
@@ -117,7 +118,14 @@ struct VideoTemplateDetailView: View {
     InjectedValues.setupForPreviews()
     
     let templates = (1...6).map {
-        VideoTemplate(title: "Template \($0)", categoryName: "Popular", photoSlotCount: $0 % 2 + 1)
+        VideoTemplate(
+            id: $0,
+            title: "Template \($0)",
+            categoryName: "category of template \($0)",
+            photoSlotCount: 1,
+            availableQualities: ["480", "4k"],
+            previewURL: nil
+        )
     }
     
     return VideoTemplateDetailView(
