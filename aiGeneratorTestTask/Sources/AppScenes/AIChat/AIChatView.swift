@@ -56,8 +56,7 @@ struct AIChatView: View {
             
             VStack(alignment: .leading, spacing: 2) {
                 Text("AI Chat")
-                    .font(.system(size: 20, weight: .semibold))
-                    .foregroundStyle(.accent)
+                    .asNavigationTitle()
                 
                 Text(Date.now, format: .verbatim("\(day: .twoDigits).\(month: .twoDigits).\(year: .extended())", timeZone: .current, calendar: .current))
                     .font(.system(size: 14))
