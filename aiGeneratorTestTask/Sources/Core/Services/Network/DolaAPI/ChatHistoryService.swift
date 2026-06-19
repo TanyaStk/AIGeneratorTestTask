@@ -1,0 +1,74 @@
+//
+//  ChatHistoryServiceProvider.swift
+//  aiGeneratorTestTask
+//
+
+import Foundation
+import SwiftUI
+
+protocol ChatHistoryServiceProvider {
+    func fetchChats() async throws -> [ChatSummaryModel]
+    func fetchMessages(chatId: String, limit: Int?, offset: Int) async throws -> [ChatMessageModel]
+}
+
+final class ChatHistoryService: ChatHistoryServiceProvider {
+    
+    private let network: NetworkServiceType
+    
+    @AppStorage("userID")
+    private var userID: String = ""
+
+    init(network: NetworkServiceType) {
+        self.network = network
+    }
+
+    func fetchChats() async throws -> [ChatSummaryModel] {
+        let dtos: [ChatSummaryDTO] = try await network.get(
+            path: APIConstants.Paths.chatsList,
+            queryItems: [
+                URLQueryItem(name: "user_id", value: userID),
+                URLQueryItem(name: "app_id",  value: APIConstants.appId)
+            ]
+        )
+        return dtos
+            .map { $0.toModel() }
+            .sorted { $0.updatedAt > $1.updatedAt }
+    }
+
+    func fetchMessages(chatId: String, limit: Int? = nil, offset: Int = 0) async throws -> [ChatMessageModel] {
+        var queryItems = [
+            URLQueryItem(name: "user_id", value: userID),
+            URLQueryItem(name: "app_id",  value: APIConstants.appId),
+            URLQueryItem(name: "offset",  value: "\(offset)")
+        ]
+        if let limit {
+            queryItems.append(URLQueryItem(name: "limit", value: "\(limit)"))
+        }
+
+        let dtos: [ChatHistoryMessageDTO] = try await network.get(
+            path: APIConstants.Paths.chatMessages(chatId: chatId),
+            queryItems: queryItems
+        )
+        return dtos.map { $0.toModel() }
+    }
+}
+
+// MARK: - Mock
+
+struct MockChatHistoryService: ChatHistoryServiceProvider {
+    func fetchChats() async throws -> [ChatSummaryModel] {
+        try await Task.sleep(nanoseconds: 300_000_000)
+        return [
+            ChatSummaryModel(chatId: "1", title: "Welcome email for Alexander", updatedAt: Date(), lastMessagePreview: "Welcome to the team, Alexander!"),
+            ChatSummaryModel(chatId: "2", title: "Trip itinerary", updatedAt: Date().addingTimeInterval(-86400), lastMessagePreview: "Here's a 3-day plan for Lisbon...")
+        ]
+    }
+
+    func fetchMessages(chatId: String, limit: Int?, offset: Int) async throws -> [ChatMessageModel] {
+        try await Task.sleep(nanoseconds: 300_000_000)
+        return [
+            ChatMessageModel(content: "Hi! Can you help me write a short welcome email?", role: .user),
+            ChatMessageModel(content: MockChatService.defaultResponse, role: .ai)
+        ]
+    }
+}
