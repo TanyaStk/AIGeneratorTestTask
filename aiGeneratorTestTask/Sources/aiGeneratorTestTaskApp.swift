@@ -6,6 +6,11 @@
 import SwiftUI
 import ApphudSDK
 
+#if DEBUG
+import Atlantis
+#endif
+
+
 @main
 struct aiGeneratorTestTaskApp: App {
     
@@ -17,6 +22,10 @@ struct aiGeneratorTestTaskApp: App {
     
     init() {
         setupApphud()
+        
+#if DEBUG
+        Atlantis.start()
+#endif
     }
     
     var body: some Scene {

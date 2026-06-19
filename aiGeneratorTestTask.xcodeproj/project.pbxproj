@@ -8,15 +8,29 @@
 
 /* Begin PBXBuildFile section */
 		11AAC3242FE435EC00C6C8C8 /* ApphudSDK in Frameworks */ = {isa = PBXBuildFile; productRef = 11AAC3232FE435EC00C6C8C8 /* ApphudSDK */; };
+		11B475E92FE56330005D2977 /* Atlantis in Frameworks */ = {isa = PBXBuildFile; productRef = 11B475E82FE56330005D2977 /* Atlantis */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
 		11EB06602FE08D9700BEE90C /* aiGeneratorTestTask.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = aiGeneratorTestTask.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
+/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		11B475EB2FE5636F005D2977 /* Exceptions for "aiGeneratorTestTask" folder in "aiGeneratorTestTask" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Info.plist,
+			);
+			target = 11EB065F2FE08D9700BEE90C /* aiGeneratorTestTask */;
+		};
+/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
+
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		11EB06622FE08D9700BEE90C /* aiGeneratorTestTask */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				11B475EB2FE5636F005D2977 /* Exceptions for "aiGeneratorTestTask" folder in "aiGeneratorTestTask" target */,
+			);
 			path = aiGeneratorTestTask;
 			sourceTree = "<group>";
 		};
@@ -27,6 +41,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				11B475E92FE56330005D2977 /* Atlantis in Frameworks */,
 				11AAC3242FE435EC00C6C8C8 /* ApphudSDK in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -71,6 +86,7 @@
 			name = aiGeneratorTestTask;
 			packageProductDependencies = (
 				11AAC3232FE435EC00C6C8C8 /* ApphudSDK */,
+				11B475E82FE56330005D2977 /* Atlantis */,
 			);
 			productName = aiGeneratorTestTask;
 			productReference = 11EB06602FE08D9700BEE90C /* aiGeneratorTestTask.app */;
@@ -102,6 +118,7 @@
 			minimizedProjectReferenceProxies = 1;
 			packageReferences = (
 				11AAC3222FE435EC00C6C8C8 /* XCRemoteSwiftPackageReference "ApphudSDK" */,
+				11B475E72FE56330005D2977 /* XCRemoteSwiftPackageReference "atlantis" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 11EB06612FE08D9700BEE90C /* Products */;
@@ -266,6 +283,8 @@
 				DEVELOPMENT_TEAM = "";
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = aiGeneratorTestTask/Info.plist;
+				INFOPLIST_KEY_NSLocalNetworkUsageDescription = "Atlantis would use Bonjour Service to discover Proxyman app from your local network. Atlantis uses it to transfer the data from your iOS app to Proxyman macOS for debugging purposes.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -305,6 +324,8 @@
 				DEVELOPMENT_TEAM = "";
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = aiGeneratorTestTask/Info.plist;
+				INFOPLIST_KEY_NSLocalNetworkUsageDescription = "Atlantis would use Bonjour Service to discover Proxyman app from your local network. Atlantis uses it to transfer the data from your iOS app to Proxyman macOS for debugging purposes.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -365,6 +386,14 @@
 				minimumVersion = 4.2.3;
 			};
 		};
+		11B475E72FE56330005D2977 /* XCRemoteSwiftPackageReference "atlantis" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/ProxymanApp/atlantis";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.36.0;
+			};
+		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
@@ -372,6 +401,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 11AAC3222FE435EC00C6C8C8 /* XCRemoteSwiftPackageReference "ApphudSDK" */;
 			productName = ApphudSDK;
+		};
+		11B475E82FE56330005D2977 /* Atlantis */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 11B475E72FE56330005D2977 /* XCRemoteSwiftPackageReference "atlantis" */;
+			productName = Atlantis;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};
