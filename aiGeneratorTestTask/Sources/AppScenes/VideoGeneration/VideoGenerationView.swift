@@ -27,6 +27,7 @@ struct VideoGenerationView: View {
                     Image(.Images.Common.Icons.reload)
                 }
             }
+            .background(.card.opacity(0.4))
             
             categoryBar
             content
