@@ -28,6 +28,7 @@ final class ChatAPIService: ChatServiceProvider {
         let response: SendMessageResponse = try await network.post(
             path: APIConstants.Paths.chatMessages(chatId: chatId),
             queryItems: [
+                URLQueryItem(name: "chat_id", value: chatId),
                 URLQueryItem(name: "user_id", value: userID),
                 URLQueryItem(name: "app_id",  value: APIConstants.appId)
             ],
@@ -52,7 +53,8 @@ Here are a few tips:
 """
 
     func send(message: String, chatId: String) async throws -> String {
-        try await Task.sleep(nanoseconds: 1_000_000_000)
+        try await Task.sleep(nanoseconds: 4_000_000_000)
+        
         return Self.defaultResponse
     }
 }
