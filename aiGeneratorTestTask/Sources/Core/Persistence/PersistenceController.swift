@@ -43,51 +43,9 @@ final class PersistenceController {
                 attribute("thumbnailPath",   .stringAttributeType, optional: true),
             ]
         )
-
-        // MARK: - ChatSessionEntity
-        let sessionEntity = entity(
-            name: "ChatSessionEntity",
-            className: ChatSessionEntity.self,
-            attributes: [
-                attribute("id",        .UUIDAttributeType),
-                attribute("title",     .stringAttributeType),
-                attribute("createdAt", .dateAttributeType)
-            ]
-        )
-
-        // MARK: - ChatMessageEntity
-        let messageEntity = entity(
-            name: "ChatMessageEntity",
-            className: ChatMessageEntity.self,
-            attributes: [
-                attribute("id",        .UUIDAttributeType),
-                attribute("content",   .stringAttributeType),
-                attribute("role",      .stringAttributeType),
-                attribute("createdAt", .dateAttributeType)
-            ]
-        )
-
-        // MARK: - Relationships
-        let sessionToMessages = relationship(
-            name: "messages",
-            destination: messageEntity,
-            toMany: true,
-            deleteRule: .cascadeDeleteRule,
-            ordered: true
-        )
-        let messageToSession = relationship(
-            name: "session",
-            destination: sessionEntity,
-            toMany: false,
-            deleteRule: .nullifyDeleteRule
-        )
-        sessionToMessages.inverseRelationship = messageToSession
-        messageToSession.inverseRelationship = sessionToMessages
-
-        sessionEntity.properties.append(sessionToMessages)
-        messageEntity.properties.append(messageToSession)
-
-        model.entities = [videoEntity, sessionEntity, messageEntity]
+        
+        model.entities = [videoEntity]
+        
         return model
     }
 }
