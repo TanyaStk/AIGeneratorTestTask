@@ -37,7 +37,7 @@ private extension AppRouterViewModifier {
         case .photoToVideoGeneration:
             VideoGenerationView(viewModel: VideoGenerationViewModel())
         case .aiChat:
-            AIChatView()
+            AIChatView(viewModel: AIChatViewModel())
         case .templateDetail(selected: let selected, all: let all):
             VideoTemplateDetailView(viewModel: VideoTemplateDetailViewModel(selected: selected, all: all))
         case .videoProcess(request: let request):
