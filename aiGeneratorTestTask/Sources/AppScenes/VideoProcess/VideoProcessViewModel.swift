@@ -29,14 +29,17 @@ final class VideoProcessViewModel: ObservableObject {
     
     func startGeneration() async {
         do {
-            let result = try await networkService.generate(request: request)
+            var result = try await networkService.generate(request: request)
             
-            if let videoURL = result.videoURL {
-                try await saveGeneratedVideo(sourceURL: videoURL)
+            guard let videoURL = result.videoURL else {
+                throw VideoGenerationError.networkFailure
             }
             
+            let savedURL = try await saveGeneratedVideo(sourceURL: videoURL)
+            
             guard !Task.isCancelled else { return }
-
+            
+            result.videoURL = savedURL
             state = .result(.success(result))
         } catch is CancellationError {
             print("Task is Cancelled")
@@ -58,7 +61,7 @@ final class VideoProcessViewModel: ObservableObject {
 }
 
 private extension VideoProcessViewModel {
-    func saveGeneratedVideo(sourceURL: URL) async throws {
+    func saveGeneratedVideo(sourceURL: URL) async throws -> URL {
         let videoFileName = try fileManager.saveVideo(from: sourceURL)
         let thumbFileName = await fileManager.generateThumbnail(for: videoFileName)
         
@@ -66,5 +69,7 @@ private extension VideoProcessViewModel {
             videoFileName: videoFileName,
             thumbnailFileName: thumbFileName
         )
+        
+        return fileManager.videoURL(for: videoFileName)
     }
 }

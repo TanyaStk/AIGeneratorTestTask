@@ -18,6 +18,8 @@ struct VideoPreviewView: View {
             thumbnailLayer
             playButton
         }
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .background(Color.card.opacity(0.6))
         .clipShape(RoundedRectangle(cornerRadius: 20, style: .continuous))
         .task { await generateThumbnail() }
         .fullScreenCover(isPresented: $isPlaying) {
@@ -33,11 +35,8 @@ struct VideoPreviewView: View {
         if let thumbnail {
             Image(uiImage: thumbnail)
                 .resizable()
-                .scaledToFill()
-                .frame(maxWidth: .infinity, maxHeight: .infinity)
-        } else {
-            Color.card.opacity(0.6)
-                .frame(maxWidth: .infinity, maxHeight: .infinity)
+                .scaledToFit()
+                .clipped()
         }
     }
 
