@@ -8,7 +8,7 @@ import Foundation
 
 struct SendMessageRequest: Encodable {
     let message: String
-    let personaId: String?      = nil
+    let personaId: String? = nil
     let additionalPrompt: String? = nil
 }
 
