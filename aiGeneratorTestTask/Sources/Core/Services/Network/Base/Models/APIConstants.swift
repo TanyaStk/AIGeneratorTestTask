@@ -15,6 +15,7 @@ enum APIConstants {
         static let templates = "/pixverse/api/v1/get_templates/\(APIConstants.appId)"
         static let generateVideo = "/pixverse/api/v1/image2video"
         static let videoStatus = "/pixverse/api/v1/status"
+        static let chatsList = "/dola/chats"
         
         static func chatMessages(chatId: String) -> String {
             "/dola/chats/\(chatId)/messages"
