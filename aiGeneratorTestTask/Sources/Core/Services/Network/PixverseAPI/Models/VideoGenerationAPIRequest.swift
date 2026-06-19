@@ -8,7 +8,7 @@ import Foundation
 struct VideoGenerationAPIRequest: Encodable {
     let userId: String
     let appId: String
-    let templateId: Int
+    let prompt: String
     let image: String
     let duration: Int
     let quality: String

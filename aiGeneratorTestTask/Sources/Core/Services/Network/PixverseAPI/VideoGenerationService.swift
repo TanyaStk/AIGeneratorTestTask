@@ -16,15 +16,15 @@ final class VideoGenerationAPIService: VideoGenerationService {
     private var userID: String = ""
     
     private let network: NetworkServiceType
-
+    
     init(network: NetworkServiceType) {
         self.network = network
     }
-
+    
     func generate(request: VideoGenerationRequest) async throws -> VideoGenerationResponse {
         let videoId = try await submitGeneration(request: request)
         let videoURL = try await pollStatus(videoId: videoId)
-
+        
         return VideoGenerationResponse(
             id: videoId,
             templateTitle: request.templateTitle,
@@ -40,27 +40,37 @@ private extension VideoGenerationAPIService {
               let imageData = image.jpegData(compressionQuality: 0.85) else {
             throw VideoGenerationError.unknown
         }
-
-        let body = VideoGenerationAPIRequest(
-            userId: userID,
-            appId: APIConstants.appId,
-            templateId: request.templateId,
-            image: imageData.base64EncodedString(),
-            duration: request.duration,
-            quality: request.quality
+        
+        let file = MultipartFile(
+            name: "image",
+            filename: "photo.jpg",
+            mimeType: "image/jpeg",
+            data: imageData
         )
-
-        let response: VideoGenerationAPIResponse = try await network.post(
+        
+        let textFields: [String: String] = [
+            "prompt": "generate video with \(request.templateTitle)",
+            "duration": "\(request.duration)",
+            "quality": request.quality
+        ]
+        
+        let response: VideoGenerationAPIResponse = try await network.postMultipart(
             path: APIConstants.Paths.generateVideo,
-            body: body
+            queryItems: [
+                URLQueryItem(name: "user_id", value: userID),
+                URLQueryItem(name: "app_id",  value: APIConstants.appId)
+            ],
+            textFields: textFields,
+            file: file
         )
+        
         return response.videoId
     }
-
+    
     func pollStatus(videoId: Int) async throws -> URL? {
         for attempt in 1...Constants.maxPollAttempts {
             try Task.checkCancellation()
-
+            
             let status: VideoStatusResponse = try await network.get(
                 path: APIConstants.Paths.videoStatus,
                 queryItems: [
@@ -69,14 +79,18 @@ private extension VideoGenerationAPIService {
                     URLQueryItem(name: "app_id", value: APIConstants.appId)
                 ]
             )
-
+            
             switch VideoStatus(status.status) {
             case .completed:
-                return status.videoUrl.flatMap(URL.init)
-
+                if let videoUrl = status.videoUrl.flatMap(URL.init) {
+                    
+                    let videoUrl = URL(string: Self.getRandomVideoURL())! // TODO: - remove mock url in production
+                    
+                    return try await network.download(from: videoUrl)
+                }
             case .failed:
                 throw VideoGenerationError.serverError(code: -1)
-
+                
             case .pending, .processing, .unknown:
                 if attempt == Constants.maxPollAttempts {
                     throw VideoGenerationError.timeout
@@ -89,6 +103,20 @@ private extension VideoGenerationAPIService {
     }
 }
 
+// MARK: - Mock video urls
+
+private extension VideoGenerationAPIService {
+    static func getRandomVideoURL() -> String {
+        [
+            "https://test-videos.co.uk/vids/bigbuckbunny/mp4/h264/360/Big_Buck_Bunny_360_10s_1MB.mp4",
+            "https://test-videos.co.uk/vids/sintel/mp4/h264/720/Sintel_720_10s_2MB.mp4",
+            "https://test-videos.co.uk/vids/jellyfish/mp4/h264/360/Jellyfish_360_10s_1MB.mp4"
+        ].randomElement() ?? ""
+    }
+}
+
+// MARK: - Constants
+
 private extension VideoGenerationAPIService {
     enum Constants {
         static let pollInterval: UInt64 = 3_000_000_000
@@ -100,7 +128,7 @@ private extension VideoGenerationAPIService {
 
 struct MockVideoGenerationService: VideoGenerationService {
     var successRate: Double = 0.75
-
+    
     func generate(request: VideoGenerationRequest) async throws -> VideoGenerationResponse {
         try await Task.sleep(nanoseconds: UInt64.random(in: 3_000_000_000...5_000_000_000))
         
@@ -113,7 +141,7 @@ struct MockVideoGenerationService: VideoGenerationService {
         return VideoGenerationResponse(
             id: Int.random(in: 1000...9999),
             templateTitle: request.templateTitle,
-            videoURL: URL(string: "https://devstreaming-cdn.apple.com/videos/streaming/examples/bipbop_4x3/bipbop_4x3_variant.m3u8")
+            videoURL: URL(string: "https://example.com/sandbox/pixverse/sample.mp4")
         )
     }
 }

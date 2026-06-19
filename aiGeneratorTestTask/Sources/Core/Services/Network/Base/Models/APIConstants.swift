@@ -13,7 +13,7 @@ enum APIConstants {
     
     enum Paths {
         static let templates = "/pixverse/api/v1/get_templates/\(APIConstants.appId)"
-        static let generateVideo = "/pixverse/api/v1/template2video"
+        static let generateVideo = "/pixverse/api/v1/image2video"
         static let videoStatus = "/pixverse/api/v1/status"
         
         static func chatMessages(chatId: String) -> String {
