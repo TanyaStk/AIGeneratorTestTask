@@ -64,6 +64,8 @@ struct VideoTemplateDetailView: View {
         if let url = viewModel.state.currentTemplateDownloadedURL {
             LoopingVideoPlayerView(url: url)
                 .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
+        } else if viewModel.state.shouldShowRetryLoadingVideo {
+            ReplaceButton(title: "Reload", onReplace: viewModel.reloadTemplate)
         } else {
             PinkProgressView()
         }

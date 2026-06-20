@@ -24,7 +24,14 @@ final class VideoTemplateDetailViewModel: ObservableObject {
             selectedFormat: VideoFormat.horizontal.rawValue
         )
         
-        onTemplateChanged()
+        reloadTemplate()
+    }
+    
+    @MainActor
+    deinit {
+        if let url = state.currentTemplateDownloadedURL {
+            try? fileManager.removeItem(at: url)
+        }
     }
     
     func didPickImage(_ image: UIImage, slotIndex: Int) {
@@ -49,7 +56,15 @@ final class VideoTemplateDetailViewModel: ObservableObject {
             state.selectedQuality = state.currentTemplate.availableQualities.first ?? "1080p"
         }
         
-        state.currentTemplateDownloadedURL = nil
+        reloadTemplate()
+    }
+    
+    func reloadTemplate() {
+        if let url = state.currentTemplateDownloadedURL {
+            state.currentTemplateDownloadedURL = nil
+            try? fileManager.removeItem(at: url)
+        }
+        
         downloadPreviewVideo()
     }
     
@@ -97,7 +112,7 @@ private extension VideoTemplateDetailViewModel {
                     state.currentTemplateDownloadedURL = fileManager.videoURL(for: savedURL)
                 }
             } catch {
-                
+                state.shouldShowRetryLoadingVideo = true
             }
         }
     }
@@ -113,6 +128,7 @@ extension VideoTemplateDetailViewModel {
         var pickingSlotIndex: Int? = nil
         var showPhotoPicker = false
         var currentTemplateDownloadedURL: URL?
+        var shouldShowRetryLoadingVideo: Bool = false
         
         var currentTemplate: VideoTemplate {
             templates[currentIndex]

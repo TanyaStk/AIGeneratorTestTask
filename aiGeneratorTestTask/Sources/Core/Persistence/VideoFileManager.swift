@@ -27,10 +27,18 @@ final class VideoFileManager {
     
     func saveVideo(with name: String? = nil, from sourceURL: URL) throws -> String {
         let fileName = (name ?? UUID().uuidString) + ".mp4"
+        let filePath = videosDir.appendingPathComponent(fileName)
         
-        try fm.copyItem(at: sourceURL, to: videosDir.appendingPathComponent(fileName))
+        if fm.fileExists(atPath: filePath.path()) {
+            try removeItem(at: filePath)
+        }
+        try fm.copyItem(at: sourceURL, to: filePath)
         
         return fileName
+    }
+    
+    func removeItem(at url: URL) throws {
+        try fm.removeItem(at: url)
     }
     
     func videoURL(for fileName: String) -> URL {

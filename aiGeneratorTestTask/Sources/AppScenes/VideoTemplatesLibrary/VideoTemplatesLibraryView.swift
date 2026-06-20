@@ -62,6 +62,7 @@ struct VideoTemplatesLibraryView: View {
                 LazyVGrid(columns: columns, spacing: 16) {
                     ForEach(viewModel.state.templates) { template in
                         VideoTemplateCardView(template: template)
+                            .frame(maxWidth: 170)
                             .frame(height: 232)
                             .clipShape(.rect(cornerRadius: 24, style: .continuous))
                             .onTapGesture {
