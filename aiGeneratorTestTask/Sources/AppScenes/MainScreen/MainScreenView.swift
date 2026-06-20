@@ -8,6 +8,8 @@ import SwiftUI
 
 struct MainScreenView: View {
     
+    @StateObject var viewModel: MainScreenViewModel
+    
     @EnvironmentObject var router: AppRouter
     
     var body: some View {
@@ -92,16 +94,16 @@ struct MainScreenView: View {
     private var toolsSection: some View {
         HStack(alignment: .top, spacing: 12) {
             MainScreenFeatureView(tool: .photoToVideo) {
-                router.push(.photoToVideoGeneration)
+                showVideoGenerationOrPaywall()
             }
             
             VStack(spacing: 12) {
                 AITextToolCardView(tool: .rewriteText) {
-                    router.push(.aiChat)
+                    showChatOrPaywall()
                 }
                 
                 AITextToolCardView(tool: .summarizeText) {
-                    router.push(.aiChat)
+                    showChatOrPaywall()
                 }
             }
             .frame(maxWidth: .infinity)
@@ -109,7 +111,25 @@ struct MainScreenView: View {
     }
 }
 
+private extension MainScreenView {
+    func showChatOrPaywall() {
+        if viewModel.userHasPremium {
+            router.push(.aiChat)
+        } else {
+            router.togglePaywallVisibility()
+        }
+    }
+    
+    func showVideoGenerationOrPaywall() {
+        if viewModel.userHasPremium {
+            router.push(.photoToVideoGeneration)
+        } else {
+            router.togglePaywallVisibility()
+        }
+    }
+}
+
 #Preview {
-    MainScreenView()
+    MainScreenView(viewModel: .init())
         .embedRouter()
 }
