@@ -13,13 +13,13 @@ protocol ChatServiceProvider {
 
 final class ChatAPIService: ChatServiceProvider {
     
-    @AppStorage("userID")
-    private var userID: String = ""
-    
     private let network: NetworkServiceType
+    private let userSession: UserSessionProvider
 
-    init(network: NetworkServiceType) {
+    init(network: NetworkServiceType,
+         userSession: UserSessionProvider) {
         self.network = network
+        self.userSession = userSession
     }
 
     func send(message: String, chatId: String) async throws -> String {
@@ -29,7 +29,7 @@ final class ChatAPIService: ChatServiceProvider {
             path: APIConstants.Paths.chatMessages(chatId: chatId),
             queryItems: [
                 URLQueryItem(name: "chat_id", value: chatId),
-                URLQueryItem(name: "user_id", value: userID),
+                URLQueryItem(name: "user_id", value: userSession.userID),
                 URLQueryItem(name: "app_id",  value: APIConstants.appId)
             ],
             body: body

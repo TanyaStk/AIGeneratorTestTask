@@ -14,9 +14,6 @@ import Atlantis
 @main
 struct aiGeneratorTestTaskApp: App {
     
-    @AppStorage("userID")
-    private var userID: String = ""
-    
     @Injected(\.apphudService)
     private var apphudService
     
@@ -38,6 +35,5 @@ struct aiGeneratorTestTaskApp: App {
     
     private func setupApphud() {
         apphudService.start(with: AppConstants.Apphud.key)
-        userID = apphudService.getUserID()
     }
 }

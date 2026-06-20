@@ -12,13 +12,13 @@ protocol VideoGenerationService {
 
 final class VideoGenerationAPIService: VideoGenerationService {
     
-    @AppStorage("userID")
-    private var userID: String = ""
-    
     private let network: NetworkServiceType
+    private let userSession: UserSessionProvider
     
-    init(network: NetworkServiceType) {
+    init(network: NetworkServiceType,
+         userSession: UserSessionProvider) {
         self.network = network
+        self.userSession = userSession
     }
     
     func generate(request: VideoGenerationRequest) async throws -> VideoGenerationResponse {
@@ -57,7 +57,7 @@ private extension VideoGenerationAPIService {
         let response: VideoGenerationAPIResponse = try await network.postMultipart(
             path: APIConstants.Paths.generateVideo,
             queryItems: [
-                URLQueryItem(name: "user_id", value: userID),
+                URLQueryItem(name: "user_id", value: userSession.userID),
                 URLQueryItem(name: "app_id",  value: APIConstants.appId)
             ],
             textFields: textFields,
@@ -75,7 +75,7 @@ private extension VideoGenerationAPIService {
                 path: APIConstants.Paths.videoStatus,
                 queryItems: [
                     URLQueryItem(name: "id", value: "\(videoId)"),
-                    URLQueryItem(name: "user_id", value: userID),
+                    URLQueryItem(name: "user_id", value: userSession.userID),
                     URLQueryItem(name: "app_id", value: APIConstants.appId)
                 ]
             )
@@ -83,8 +83,8 @@ private extension VideoGenerationAPIService {
             switch VideoStatus(status.status) {
             case .completed:
                 if let videoUrl = status.videoUrl.flatMap(URL.init) {
-                    
-                    let videoUrl = URL(string: Self.getRandomVideoURL())! // TODO: - remove mock url in production
+
+                    //                    let videoUrl = URL(string: Self.getRandomVideoURL())! // TODO: - remove mock url in production
                     
                     return try await network.download(from: videoUrl)
                 }

@@ -13,23 +13,25 @@ protocol ChatHistoryServiceProvider {
 final class ChatHistoryService: ChatHistoryServiceProvider {
     
     private let network: NetworkServiceType
+    private let userSession: UserSessionProvider
     
-    @AppStorage("userID")
-    private var userID: String = ""
+//    @AppStorage("userID")
+//    private var userID: String = ""
 
-    init(network: NetworkServiceType) {
+    init(network: NetworkServiceType,
+         userSession: UserSessionProvider) {
         self.network = network
+        self.userSession = userSession
     }
 
     func fetchChats() async throws -> [ChatSummaryModel] {
         let dtos: [ChatSummaryDTO] = try await network.get(
             path: APIConstants.Paths.chatsList,
             queryItems: [
-                URLQueryItem(name: "user_id", value: userID),
+                URLQueryItem(name: "user_id", value: userSession.userID),
                 URLQueryItem(name: "app_id",  value: APIConstants.appId)
             ]
         )
-        
         
         
         return dtos

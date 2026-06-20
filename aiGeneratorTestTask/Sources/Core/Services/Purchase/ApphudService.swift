@@ -8,6 +8,7 @@ import Foundation
 import ApphudSDK
 import Combine
 import StoreKit
+import SwiftUI
 
 protocol ApphudServiceType {
     var hasActiveSubscriptionPublisher: AnyPublisher<Bool, Never> { get }
@@ -18,7 +19,6 @@ protocol ApphudServiceType {
     @MainActor func restorePurchases() async throws -> Bool
     
     func start(with apiKey: String)
-    func getUserID() -> String
 }
 
 final class ApphudService: ApphudServiceType {
@@ -26,7 +26,13 @@ final class ApphudService: ApphudServiceType {
     private let hasActiveSubscriptionSubject = PassthroughSubject<Bool, Never>()
     private let productsModelSubject = CurrentValueSubject<[PaywallProductModel], Never>([])
     private let apphudPaywallsSubject = CurrentValueSubject<[ApphudPaywall], Never>([])
-
+    
+    private let userSession: UserSessionProvider
+    
+    init(userSession: UserSessionProvider) {
+        self.userSession = userSession
+    }
+    
     var hasActiveSubscriptionPublisher: AnyPublisher<Bool, Never> {
         hasActiveSubscriptionSubject.eraseToAnyPublisher()
     }
@@ -36,7 +42,8 @@ final class ApphudService: ApphudServiceType {
     }
     
     var hasActiveSubscription: Bool {
-        updateSubscriptionState()
+                updateSubscriptionState()
+//        true
     }
     
     func start(with apiKey: String) {
@@ -45,10 +52,6 @@ final class ApphudService: ApphudServiceType {
             
             setup()
         }
-    }
-    
-    func getUserID() -> String {
-        Apphud.userID()
     }
     
     @MainActor
@@ -100,10 +103,11 @@ final class ApphudService: ApphudServiceType {
 private extension ApphudService {
     func setup() {
         Apphud.setDelegate(self)
-        #if DEBUG
+        userSession.setID(Apphud.userID())
+#if DEBUG
         Apphud.enableDebugLogs()
         ApphudUtils.enableAllLogs()
-        #endif
+#endif
     }
     
     func findApphudProduct(matching id: String) -> ApphudProduct? {
@@ -138,6 +142,15 @@ extension ApphudService: ApphudDelegate {
             updateSubscriptionState()
         }
     }
+    
+    func apphudDidChangeUserID(_ userID: String) {
+        userSession.setID(userID)
+    }
+    
+    func userDidLoad(user: ApphudUser) {
+        userSession.setID(user.userId)
+    }
+    
 }
 
 // MARK: - Mock
@@ -173,8 +186,6 @@ final class MockApphudService: ApphudServiceType {
         paywallsModelSubject.eraseToAnyPublisher()
     }
     
-    func getUserID() -> String { "" }
-    
     @MainActor
     func purchase(productId: String) async throws -> Bool {
         // simulate success or failure
@@ -194,6 +205,6 @@ final class MockApphudService: ApphudServiceType {
             await initialize()
         }
     }
-
+    
 }
 

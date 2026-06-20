@@ -42,6 +42,7 @@ struct ChatHistoryView: View {
             PinkProgressView().largeScale()
         } else if viewModel.state.chats.isEmpty {
             HistoryEmptyView(type: .chat)
+                .frame(maxHeight: .infinity, alignment: .center)
         } else {
             ScrollView(showsIndicators: false) {
                 VStack(alignment: .leading, spacing: 32) {

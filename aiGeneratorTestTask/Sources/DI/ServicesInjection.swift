@@ -52,6 +52,11 @@ extension InjectedValues {
         get { Self[PhotoLibraryServiceKey.self] }
         set { Self[PhotoLibraryServiceKey.self] = newValue }
     }
+    
+    var userSession: UserSessionProvider {
+        get { Self[UserSessionKey.self] }
+        set { Self[UserSessionKey.self] = newValue }
+    }
 }
 
 // MARK: - Injected values for preview
@@ -79,7 +84,10 @@ private struct VideoFileManagerKey: InjectionKey {
 }
 
 private struct VideoGenerationServiceKey: InjectionKey {
-    static var currentValue: VideoGenerationService = VideoGenerationAPIService(network: InjectedValues[\.networkService])
+    static var currentValue: VideoGenerationService = VideoGenerationAPIService(
+        network: InjectedValues[\.networkService],
+        userSession: InjectedValues[\.userSession]
+    )
 }
 
 private struct VideoTemplateProviderKey: InjectionKey {
@@ -91,19 +99,29 @@ private struct NetworkServiceKey: InjectionKey {
 }
 
 private struct ChatServiceKey: InjectionKey {
-    static var currentValue: ChatServiceProvider = ChatAPIService(network: InjectedValues[\.networkService])
+    static var currentValue: ChatServiceProvider = ChatAPIService(
+        network: InjectedValues[\.networkService],
+        userSession: InjectedValues[\.userSession]
+    )
 }
 
 private struct ApphudServiceKey: InjectionKey {
-    static var currentValue: ApphudServiceType = ApphudService()
+    static var currentValue: ApphudServiceType = ApphudService(
+        userSession: InjectedValues[\.userSession]
+    )
 }
 
 private struct ChatHistoryServiceKey: InjectionKey {
     static var currentValue: ChatHistoryServiceProvider = ChatHistoryService(
-        network: InjectedValues[\.networkService]
+        network: InjectedValues[\.networkService],
+        userSession: InjectedValues[\.userSession]
     )
 }
 
 private struct PhotoLibraryServiceKey: InjectionKey {
     static var currentValue: PhotoLibraryServiceProtocol = PhotoLibraryService()
+}
+
+private struct UserSessionKey: InjectionKey {
+    static var currentValue: UserSessionProvider = UserSession()
 }
