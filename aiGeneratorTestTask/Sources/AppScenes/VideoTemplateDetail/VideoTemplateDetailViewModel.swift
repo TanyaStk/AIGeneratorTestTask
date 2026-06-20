@@ -15,6 +15,11 @@ final class VideoTemplateDetailViewModel: ObservableObject {
     
     @Injected(\.videoTemplateProvider) private var videoTemplateService
     @Injected(\.videoFileManager) private var fileManager
+    @Injected(\.apphudService) private var apphudService
+    
+    var userHasPremium: Bool {
+        apphudService.hasActiveSubscription
+    }
     
     init(selected: VideoTemplate, all: [VideoTemplate]) {
         self.state = .init(
