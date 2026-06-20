@@ -24,7 +24,7 @@ struct VideoPreviewView: View {
         .task { await generateThumbnail() }
         .fullScreenCover(isPresented: $isPlaying) {
             if let url {
-                VideoPlayerView(url: url)
+                FullScreenVideoPlayerView(url: url)
                     .ignoresSafeArea()
             }
         }
