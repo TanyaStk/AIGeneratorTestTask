@@ -56,10 +56,7 @@ struct VideoTemplatesLibraryView: View {
     @ViewBuilder
     private var content: some View {
         if viewModel.state.isLoading && viewModel.state.templates.isEmpty {
-            ProgressView()
-            .scaleEffect(2)
-            .tint(.lightPink)
-            .frame(maxHeight: .infinity)
+            PinkProgressView().largeScale()
         } else {
             ScrollView {
                 LazyVGrid(columns: columns, spacing: 16) {

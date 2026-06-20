@@ -12,7 +12,7 @@ struct VideoHistoryView: View {
     private let spacing: CGFloat = 8
     
     var body: some View {
-        VStack {
+        VStack(spacing: 24) {
             NavigationBarView {
                 Text("AI Video History")
                     .asNavigationTitle()

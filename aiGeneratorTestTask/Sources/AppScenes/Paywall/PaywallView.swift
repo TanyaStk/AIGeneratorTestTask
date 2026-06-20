@@ -38,14 +38,14 @@ struct PaywallView: View {
                     }
                 }
             } else {
-                progressView
+                PinkProgressView()
                     .frame(height: 100)
             }
             
             cancelAnyTimeButton
             
             if viewModel.state.isLoadingPurchase {
-                progressView
+                PinkProgressView()
                     .frame(height: 52)
             } else {
                 purchaseButton
@@ -72,11 +72,6 @@ struct PaywallView: View {
             isPresented: $viewModel.state.shouldShowAlert,
             retryAction: viewModel.tryAgain
         ))
-    }
-    
-    private var progressView: some View {
-        ProgressView()
-            .foregroundStyle(.lightPink)
     }
     
     private var purchaseButton: some View {

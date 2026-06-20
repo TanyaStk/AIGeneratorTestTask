@@ -12,7 +12,7 @@ struct VideoPreviewView: View {
 
     @State private var thumbnail: UIImage?
     @State private var isPlaying = false
-
+    
     var body: some View {
         ZStack {
             thumbnailLayer

@@ -46,6 +46,9 @@ struct AIChatView: View {
                 }
         }
         .animation(.spring, value: viewModel.state.messages)
+        .onAppear {
+            isTextFieldFocused.toggle()
+        }
     }
     
     // MARK: - Nav title

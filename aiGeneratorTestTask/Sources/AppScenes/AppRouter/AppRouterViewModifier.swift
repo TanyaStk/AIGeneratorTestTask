@@ -45,7 +45,7 @@ private extension AppRouterViewModifier {
         case .videoHistory:
             VideoHistoryView(viewModel: .init())
         case .chatHistory:
-            ChatHistoryView()
+            ChatHistoryView(viewModel: .init())
         }
     }
 }

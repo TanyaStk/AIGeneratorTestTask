@@ -103,8 +103,7 @@ struct VideoResultView: View {
             } label: {
                 Group {
                     if state.isSaving {
-                        ProgressView()
-                            .tint(.white)
+                        PinkProgressView()
                     } else {
                         Text("Download")
                     }
