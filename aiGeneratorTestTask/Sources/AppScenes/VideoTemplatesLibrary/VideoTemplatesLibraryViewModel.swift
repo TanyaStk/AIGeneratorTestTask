@@ -1,12 +1,12 @@
 //
-//  VideoGenerationViewModel.swift
+//  VideoTemplatesLibraryViewModel.swift
 //  aiGeneratorTestTask
 //
 
 import Foundation
 import Combine
 
-final class VideoGenerationViewModel: ObservableObject {
+final class VideoTemplatesLibraryViewModel: ObservableObject {
     
     @Injected(\.videoTemplateProvider) private var service
     
@@ -71,7 +71,7 @@ final class VideoGenerationViewModel: ObservableObject {
     }
 }
 
-extension VideoGenerationViewModel {
+extension VideoTemplatesLibraryViewModel {
     struct State {
         var categories: [VideoCategory] = []
         var templates: [VideoTemplate] = []

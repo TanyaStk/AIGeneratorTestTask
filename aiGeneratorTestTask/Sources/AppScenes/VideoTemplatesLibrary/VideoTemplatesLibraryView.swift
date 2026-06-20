@@ -1,13 +1,11 @@
 //
-//  VideoGenerationView.swift
+//  VideoTemplatesLibraryView.swift
 //  aiGeneratorTestTask
 //
 
 import SwiftUI
 
-import SwiftUI
-
-struct VideoGenerationView: View {
+struct VideoTemplatesLibraryView: View {
     
     @StateObject var viewModel: VideoGenerationViewModel
     
@@ -125,6 +123,6 @@ struct VideoGenerationView: View {
 #Preview {
     InjectedValues.setupForPreviews()
     
-    return VideoGenerationView(viewModel: VideoGenerationViewModel())
+    return VideoTemplatesLibraryView(viewModel: VideoGenerationViewModel())
         .embedRouter()
 }

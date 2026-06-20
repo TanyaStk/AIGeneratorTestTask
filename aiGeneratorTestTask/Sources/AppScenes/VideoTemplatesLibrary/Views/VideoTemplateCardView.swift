@@ -12,7 +12,7 @@ struct VideoTemplateCardView: View {
     
     var body: some View {
         ZStack(alignment: .bottom) {
-            Image(.Images.VideoGeneration.templateMock)
+            Image(.Images.VideoGeneration.templateMock) // TODO: Add real templates images
                 .resizable()
                 .clipShape(.rect(cornerRadius: 16, style: .continuous))
             
