@@ -1,0 +1,24 @@
+{
+  "originHash" : "c070979fba13a18be4d50db9d37c49d2e1e9fd1160390134d06cb9232d7a358a",
+  "pins" : [
+    {
+      "identity" : "apphudsdk",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/apphud/ApphudSDK",
+      "state" : {
+        "revision" : "23c0de964ed7d2f6f9cda83efaa1a40acfb84359",
+        "version" : "4.2.3"
+      }
+    },
+    {
+      "identity" : "atlantis",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/ProxymanApp/atlantis",
+      "state" : {
+        "revision" : "6427600ec87d516a43754e4eaa7762f3271ac77f",
+        "version" : "1.36.0"
+      }
+    }
+  ],
+  "version" : 3
+}

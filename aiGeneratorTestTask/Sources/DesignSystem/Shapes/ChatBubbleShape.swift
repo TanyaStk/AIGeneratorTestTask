@@ -1,0 +1,107 @@
+//
+//  ChatBubbleShape.swift
+//  aiGeneratorTestTask
+//
+
+import SwiftUI
+
+struct ChatBubbleShape: Shape {
+    enum TailSide {
+        case left
+        case right
+    }
+    
+    var tailSide: TailSide
+    
+    func path(in rect: CGRect) -> Path {
+        let width = rect.width
+        let height = rect.height
+        
+        let bezierPath = UIBezierPath()
+        
+        switch tailSide {
+        case .left:
+            bezierPath.move(to: CGPoint(x: 20, y: height))
+            bezierPath.addLine(to: CGPoint(x: width - 20, y: height))
+            bezierPath.addCurve(
+                to: CGPoint(x: width, y: height - 20),
+                controlPoint1: CGPoint(x: width - 8, y: height),
+                controlPoint2: CGPoint(x: width, y: height - 8)
+            )
+            bezierPath.addLine(to: CGPoint(x: width, y: 20))
+            bezierPath.addCurve(
+                to: CGPoint(x: width - 20, y: 0),
+                controlPoint1: CGPoint(x: width, y: 8),
+                controlPoint2: CGPoint(x: width - 8, y: 0)
+            )
+            bezierPath.addLine(to: CGPoint(x: 20, y: 0))
+            bezierPath.addCurve(
+                to: CGPoint(x: 5, y: 20),
+                controlPoint1: CGPoint(x: 12, y: 0),
+                controlPoint2: CGPoint(x: 5, y: 8)
+            )
+            bezierPath.addLine(to: CGPoint(x: 5, y: height - 10))
+            
+            bezierPath.addCurve(
+                to: CGPoint(x: 0, y: height),
+                controlPoint1: CGPoint(x: 5, y: height - 1),
+                controlPoint2: CGPoint(x: 0, y: height)
+            )
+            bezierPath.addLine(to: CGPoint(x: -1, y: height))
+            
+            bezierPath.addCurve(
+                to: CGPoint(x: 20, y: height),
+                controlPoint1: CGPoint(x: 15, y: height),
+                controlPoint2: CGPoint(x: 20, y: height)
+            )
+            
+        case .right:
+            bezierPath.move(to: CGPoint(x: width - 20, y: height))
+            bezierPath.addLine(to: CGPoint(x: 20, y: height))
+            bezierPath.addCurve(
+                to: CGPoint(x: 0, y: height - 20),
+                controlPoint1: CGPoint(x: 8, y: height),
+                controlPoint2: CGPoint(x: 0, y: height - 8)
+            )
+            bezierPath.addLine(to: CGPoint(x: 0, y: 20))
+            bezierPath.addCurve(
+                to: CGPoint(x: 20, y: 0),
+                controlPoint1: CGPoint(x: 0, y: 8),
+                controlPoint2: CGPoint(x: 8, y: 0))
+            bezierPath.addLine(to: CGPoint(x: width - 20, y: 0))
+            bezierPath.addCurve(
+                to: CGPoint(x: width - 5, y: 20),
+                controlPoint1: CGPoint(x: width - 12, y: 0),
+                controlPoint2: CGPoint(x: width - 5, y: 8)
+            )
+            bezierPath.addLine(to: CGPoint(x: width - 5, y: height - 12))
+            bezierPath.addCurve(
+                to: CGPoint(x: width, y: height),
+                controlPoint1: CGPoint(x: width - 5, y: height - 1),
+                controlPoint2: CGPoint(x: width, y: height)
+            )
+            bezierPath.addLine(to: CGPoint(x: width + 1, y: height))
+            bezierPath.addCurve(
+                to: CGPoint(x: width - 20, y: height),
+                controlPoint1: CGPoint(x: width - 15, y: height),
+                controlPoint2: CGPoint(x: width - 20, y: height)
+            )
+        }
+        
+        return Path(bezierPath.cgPath)
+    }
+}
+
+#Preview {
+    VStack(spacing: 16) {
+        MessageBubble(message: ChatMessageModel(
+            content: "Hi! Can you help me write a short welcome email for a new employee joining our team?",
+            role: .user
+        ))
+        MessageBubble(message: ChatMessageModel(
+            content: MockChatService.defaultResponse,
+            role: .ai
+        ))
+    }
+    .padding()
+}
