@@ -8,7 +8,6 @@ import SwiftUI
 
 protocol ChatHistoryServiceProvider {
     func fetchChats() async throws -> [ChatSummaryModel]
-    func fetchMessages(chatId: String, limit: Int?, offset: Int) async throws -> [ChatMessageModel]
 }
 
 final class ChatHistoryService: ChatHistoryServiceProvider {
