@@ -9,6 +9,7 @@ import Foundation
 protocol VideoTemplateProvider {
     func fetchCategories() async throws -> [VideoCategory]
     func fetchTemplates(for category: VideoCategory) async throws -> [VideoTemplate]
+    func downloadTemplateVideoPreview(with url: URL) async throws -> URL
 }
 
 final class VideoTemplateService: VideoTemplateProvider {
@@ -43,6 +44,10 @@ final class VideoTemplateService: VideoTemplateProvider {
         
         return allTemplates.filter { $0.categoryName == category.name }
     }
+    
+    func downloadTemplateVideoPreview(with url: URL) async throws -> URL {
+        try await network.download(from: url)
+    }
 }
 
 // MARK: - MockVideoTemplateService
@@ -68,5 +73,11 @@ struct MockVideoTemplateService: VideoTemplateProvider {
                 previewURL: nil
             )
         }
+    }
+    
+    func downloadTemplateVideoPreview(with url: URL) async throws -> URL {
+        try await Task.sleep(nanoseconds: 500_000_000)
+        
+        return Bundle.main.url(forResource: "testVideo", withExtension: "mp4")!
     }
 }

@@ -25,8 +25,8 @@ final class VideoFileManager {
     
     // MARK: - Video
     
-    func saveVideo(from sourceURL: URL) throws -> String {
-        let fileName = UUID().uuidString + ".mp4"
+    func saveVideo(with name: String? = nil, from sourceURL: URL) throws -> String {
+        let fileName = (name ?? UUID().uuidString) + ".mp4"
         
         try fm.copyItem(at: sourceURL, to: videosDir.appendingPathComponent(fileName))
         
