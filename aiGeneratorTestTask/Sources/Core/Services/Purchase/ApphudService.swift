@@ -128,10 +128,10 @@ extension ApphudService: ApphudDelegate {
     
     func paywallsDidFullyLoad(paywalls: [ApphudPaywall]) {
         Task(priority: .high) {
-            let asyncModels = await paywalls.asyncMap { await $0.products.toDomain() } // TODO: - check paywall id
+            let asyncModels = await paywalls
+                .filter({ $0.identifier == AppConstants.Apphud.paywallID })
+                .asyncMap { await $0.products.toDomain() }
             let domainModels = asyncModels.flatMap { $0 }
-            
-            print("😎 paywalls", paywalls)
             
             apphudPaywallsSubject.send(paywalls)
             productsModelSubject.send(domainModels)
@@ -139,3 +139,61 @@ extension ApphudService: ApphudDelegate {
         }
     }
 }
+
+// MARK: - Mock
+
+final class MockApphudService: ApphudServiceType {
+    private let hasActiveSubscriptionSubject = PassthroughSubject<Bool, Never>()
+    private let paywallsModelSubject = CurrentValueSubject<[PaywallProductModel], Never>([])
+    
+    var hasActiveSubscription: Bool {
+        false
+    }
+    
+    private func initialize() async {
+        try? await Task.sleep(nanoseconds: 3_500_000_000)
+        
+        // simulate premium / paywalls updates
+        // with any rules & mock data you want
+        hasActiveSubscriptionSubject.send(true)
+        paywallsModelSubject.send([.testYearly, .testMonthly])
+    }
+    
+    var hasActiveSubscriptionPublisher: AnyPublisher<Bool, Never> {
+        // simulate success or failure
+        hasActiveSubscriptionSubject.eraseToAnyPublisher()
+    }
+    
+    var paywallsDomainModelPublisher: AnyPublisher<[PaywallProductModel], Never> {
+        // simulate success or failure
+        paywallsModelSubject.eraseToAnyPublisher()
+    }
+    
+    var productsDomainModelPublisher: AnyPublisher<[PaywallProductModel], Never> {
+        paywallsModelSubject.eraseToAnyPublisher()
+    }
+    
+    func getUserID() -> String { "" }
+    
+    @MainActor
+    func purchase(productId: String) async throws -> Bool {
+        // simulate success or failure
+        try? await Task.sleep(nanoseconds: 3_500_000_000)
+        
+        return true
+    }
+    
+    @MainActor
+    func restorePurchases() async throws -> Bool {
+        // simulate success or failure
+        throw PaywallError.initializeError
+    }
+    
+    func start(with apiKey: String) {
+        Task {
+            await initialize()
+        }
+    }
+
+}
+

@@ -10,5 +10,5 @@ struct PaywallDisplayProductModel: Identifiable, Equatable {
     let perWeekPrice: String
     let perWeekString: String
     let totalPrice: String
-    let saleAmount: Int?
+    let saleAmount: Int
 }

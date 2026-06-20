@@ -17,8 +17,8 @@ struct PriceView: View {
             
             Spacer()
             
-            if let saleAmount = product.saleAmount, saleAmount > 0 {
-                saleLabel(saleAmount)
+            if product.saleAmount > 0 {
+                saleLabel(product.saleAmount)
             }
         }
         .padding(.vertical, 16)
@@ -79,7 +79,7 @@ struct PriceView: View {
             perWeekPrice: "year $1.27",
             perWeekString: "/ week",
             totalPrice: "$ 69.99",
-            saleAmount: nil
+            saleAmount: 0
         ), isSelected: true)
     }
     .background(.black)

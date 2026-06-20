@@ -22,4 +22,20 @@ extension PaywallProductModel {
         weeksInPeriodAmount: 0,
         pricePeriod: ""
     )
+    
+    static let testYearly = Self(
+        id: "testYearly.fallback.appstore.product.identifier",
+        price: "69.99",
+        priceFormat: "$",
+        weeksInPeriodAmount: 48,
+        pricePeriod: "year"
+    )
+    
+    static let testMonthly = Self(
+        id: "testMonthly.fallback.appstore.product.identifier",
+        price: "7.99",
+        priceFormat: "$",
+        weeksInPeriodAmount: 4,
+        pricePeriod: "month"
+    )
 }

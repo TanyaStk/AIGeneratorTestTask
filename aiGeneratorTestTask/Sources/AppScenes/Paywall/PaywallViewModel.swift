@@ -115,12 +115,13 @@ private extension PaywallViewModel {
             
             return .init(
                 id: product.id,
-                perWeekPrice: perWeekPrice.roundedString,
+                perWeekPrice: "\(product.pricePeriod) \(product.priceFormat)\(perWeekPrice.roundedString)",
                 perWeekString: "/ week",
-                totalPrice: product.price,
+                totalPrice: "\(product.priceFormat) \(product.price)",
                 saleAmount: saleAmount
             )
         }
+        .sorted(by: { $0.saleAmount > $1.saleAmount })
         
         state.selectedProduct = state.products?.first
     }
