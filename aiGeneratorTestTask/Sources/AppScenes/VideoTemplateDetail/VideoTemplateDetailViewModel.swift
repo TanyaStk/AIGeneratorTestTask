@@ -13,6 +13,9 @@ final class VideoTemplateDetailViewModel: ObservableObject {
     
     @Published var state: State
     
+    @Injected(\.videoTemplateProvider) private var videoTemplateService
+    @Injected(\.videoFileManager) private var fileManager
+    
     init(selected: VideoTemplate, all: [VideoTemplate]) {
         self.state = .init(
             templates: all,
@@ -20,6 +23,8 @@ final class VideoTemplateDetailViewModel: ObservableObject {
             selectedQuality: selected.availableQualities.first ?? "1080p",
             selectedFormat: VideoFormat.horizontal.rawValue
         )
+        
+        onTemplateChanged()
     }
     
     func didPickImage(_ image: UIImage, slotIndex: Int) {
@@ -43,6 +48,9 @@ final class VideoTemplateDetailViewModel: ObservableObject {
         if !state.currentTemplate.availableQualities.contains(state.selectedQuality) {
             state.selectedQuality = state.currentTemplate.availableQualities.first ?? "1080p"
         }
+        
+        state.currentTemplateDownloadedURL = nil
+        downloadPreviewVideo()
     }
     
     func setupRequest() -> VideoGenerationRequest? {
@@ -78,6 +86,21 @@ private extension VideoTemplateDetailViewModel {
         state.pickingSlotIndex = index
         state.showPhotoPicker = true
     }
+    
+    func downloadPreviewVideo() {
+        Task {
+            do {
+                if let url = state.currentTemplate.previewURL {
+                    let localURL = try await videoTemplateService.downloadTemplateVideoPreview(with: url)
+                    let savedURL = try fileManager.saveVideo(with: "currentTemplate", from: localURL)
+                    
+                    state.currentTemplateDownloadedURL = fileManager.videoURL(for: savedURL)
+                }
+            } catch {
+                
+            }
+        }
+    }
 }
 
 extension VideoTemplateDetailViewModel {
@@ -89,6 +112,7 @@ extension VideoTemplateDetailViewModel {
         var selectedFormat: String
         var pickingSlotIndex: Int? = nil
         var showPhotoPicker = false
+        var currentTemplateDownloadedURL: URL?
         
         var currentTemplate: VideoTemplate {
             templates[currentIndex]

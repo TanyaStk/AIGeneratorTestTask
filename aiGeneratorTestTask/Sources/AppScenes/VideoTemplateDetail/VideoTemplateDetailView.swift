@@ -8,6 +8,7 @@ import SwiftUI
 struct VideoTemplateDetailView: View {
     
     @StateObject var viewModel: VideoTemplateDetailViewModel
+    
     @EnvironmentObject private var router: AppRouter
     
     var body: some View {
@@ -50,18 +51,22 @@ struct VideoTemplateDetailView: View {
     
     private func templatePreview(_ template: VideoTemplate) -> some View {
         VStack(spacing: 24) {
-            templateImage
+            templateVideo
+                .frame(maxHeight: 312)
+            
             photoSlotsSection(viewModel.state.currentTemplate)
             settingsSection
         }
     }
     
-    private var templateImage: some View {
-        Image(.Images.VideoGeneration.templateMock)
-            .resizable()
-            .scaledToFill()
-            .frame(maxHeight: 312)
-            .clipShape(.rect(cornerRadius: 16, style: .continuous))
+    @ViewBuilder
+    private var templateVideo: some View {
+        if let url = viewModel.state.currentTemplateDownloadedURL {
+            LoopingVideoPlayerView(url: url)
+                .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
+        } else {
+            PinkProgressView()
+        }
     }
     
     private func photoSlotsSection(_ template: VideoTemplate) -> some View {
@@ -124,7 +129,7 @@ struct VideoTemplateDetailView: View {
             categoryName: "category of template \($0)",
             photoSlotCount: 1,
             availableQualities: ["480", "4k"],
-            previewURL: nil
+            previewURL: Bundle.main.url(forResource: "testVideo", withExtension: "mp4")!
         )
     }
     
