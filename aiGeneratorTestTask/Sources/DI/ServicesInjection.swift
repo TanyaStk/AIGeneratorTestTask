@@ -47,6 +47,11 @@ extension InjectedValues {
         get { Self[ApphudServiceKey.self] }
         set { Self[ApphudServiceKey.self] = newValue }
     }
+    
+    var photoLibraryService: PhotoLibraryServiceProtocol {
+        get { Self[PhotoLibraryServiceKey.self] }
+        set { Self[PhotoLibraryServiceKey.self] = newValue }
+    }
 }
 
 // MARK: - Injected values for preview
@@ -57,6 +62,7 @@ extension InjectedValues {
         InjectedValues[\.videoGenerationService] = MockVideoGenerationService(successRate: 1.0)
         InjectedValues[\.videoTemplateProvider] = MockVideoTemplateService()
         InjectedValues[\.chatService] = MockChatService()
+        InjectedValues[\.photoLibraryService] = MockPhotoLibraryService()
     }
 }
 
@@ -94,4 +100,8 @@ private struct ChatHistoryServiceKey: InjectionKey {
     static var currentValue: ChatHistoryServiceProvider = ChatHistoryService(
         network: InjectedValues[\.networkService]
     )
+}
+
+private struct PhotoLibraryServiceKey: InjectionKey {
+    static var currentValue: PhotoLibraryServiceProtocol = PhotoLibraryService()
 }

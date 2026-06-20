@@ -5,6 +5,7 @@
 //
 
 import SwiftUI
+import Photos
 
 struct VideoResultView: View {
     
@@ -13,7 +14,9 @@ struct VideoResultView: View {
     let onReplace: () -> ()
     let onCancel: (() -> ())?
     
-    @State private var showDownloadConfirmation = false
+    @Injected(\.photoLibraryService) private var photoLibraryService
+    
+    @State private var state = ViewState()
     
     var body: some View {
         VStack(spacing: 16) {
@@ -38,6 +41,24 @@ struct VideoResultView: View {
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .padding(.horizontal, 16)
+        .alert("Saved to Photos", isPresented: $state.showDownloadConfirmation) { // TODO: - Replace on custom view
+            Button("OK", role: .cancel) {}
+        }
+        .alert("Photos Access Needed", isPresented: $state.showPermissionAlert) {
+            Button("Cancel", role: .cancel) {}
+            Button("Open Settings") {
+                if let url = URL(string: UIApplication.openSettingsURLString) {
+                    UIApplication.shared.open(url)
+                }
+            }
+        } message: {
+            Text("Allow access to your photo library in Settings to save this video.")
+        }
+        .alert("Couldn't Save Video", isPresented: $state.showSaveError) {
+            Button("OK", role: .cancel) {}
+        } message: {
+            Text(state.saveErrorMessage)
+        }
     }
     
     private var replaceButton: some View {
@@ -80,18 +101,24 @@ struct VideoResultView: View {
             Button {
                 downloadVideo()
             } label: {
-                Text("Download")
-                    .asGradientButton()
+                Group {
+                    if state.isSaving {
+                        ProgressView()
+                            .tint(.white)
+                    } else {
+                        Text("Download")
+                    }
+                }
+                .asGradientButton()
             }
-        }
-        .alert("Saved to Photos", isPresented: $showDownloadConfirmation) { // TODO: - Replace on custom view
-            Button("OK", role: .cancel) {
-                
-            }
+            .disabled(state.isSaving)
         }
     }
+}
+
+private extension VideoResultView {
     
-    private func shareVideo() {
+    func shareVideo() {
         guard case .success(let result) = result,
               let url = result.videoURL else { return }
         
@@ -104,56 +131,60 @@ struct VideoResultView: View {
             .present(av, animated: true)
     }
     
-    private func downloadVideo() { // TODO: - Handle download and show permission on write
-        showDownloadConfirmation = true
+    func downloadVideo() {
+        guard case .success(let success) = result,
+              let url = success.videoURL else { return }
+        
+        Task {
+            await handleDownload(url: url)
+        }
+    }
+    
+    @MainActor
+    func handleDownload(url: URL) async {
+        state.isSaving = true
+        defer { state.isSaving = false }
+        
+        let currentStatus = photoLibraryService.authorizationStatus()
+        let status: PHAuthorizationStatus
+        
+        if currentStatus == .notDetermined {
+            status = await photoLibraryService.requestAuthorization()
+        } else {
+            status = currentStatus
+        }
+        
+        switch status {
+        case .authorized, .limited:
+            do {
+                try await photoLibraryService.saveVideo(at: url)
+                state.showDownloadConfirmation = true
+            } catch {
+                state.saveErrorMessage = error.localizedDescription
+                state.showSaveError = true
+            }
+            
+        case .denied, .restricted:
+            state.showPermissionAlert = true
+            
+        case .notDetermined:
+            break
+            
+        @unknown default:
+            break
+        }
     }
 }
 
-// MARK: - Error View
+// MARK: - ViewState
 
 private extension VideoResultView {
-    struct ErrorView: View {
-        
-        let error: VideoGenerationError
-        
-        var retryAction: () -> ()
-        var cancelAction: () -> ()
-        
-        var body: some View {
-            VStack(spacing: 16) {
-                VStack(spacing: 12) {
-                    Image(systemName: "exclamationmark.triangle.fill")
-                        .font(.system(size: 48))
-                        .foregroundStyle(.lightPink)
-                    
-                    Text("Generation failed")
-                        .font(.headline)
-                        .foregroundStyle(.white)
-                }
-                
-                Text(error.errorDescription ?? "Unknown error")
-                    .font(.subheadline)
-                    .foregroundStyle(.white.opacity(0.8))
-                    .multilineTextAlignment(.center)
-                
-                VStack(spacing: 8) {
-                    Button(action: retryAction) {
-                        Text("Try Again")
-                            .asGradientButton()
-                    }
-                    
-                    Button(action: cancelAction) {
-                        Text("Cancel")
-                            .asCardButton()
-                    }
-                }
-            }
-            .padding(16)
-            .background(
-                RoundedRectangle(cornerRadius: 16, style: .continuous)
-                    .fill(.card)
-            )
-        }
+    struct ViewState {
+        var showDownloadConfirmation = false
+        var isSaving = false
+        var showPermissionAlert = false
+        var showSaveError = false
+        var saveErrorMessage = ""
     }
 }
 
