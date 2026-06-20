@@ -29,16 +29,28 @@ struct VideoGenerationView: View {
             }
             .background(.card.opacity(0.4))
             
-            categoryBar
-            content
-                .frame(maxHeight: .infinity)
+            if let error = viewModel.state.errorMessage {
+                ErrorView(
+                    message: error,
+                    retryAction: viewModel.retry,
+                    cancelAction: viewModel.dismissError
+                )
+                .padding(.horizontal, 16)
+                .frame(maxHeight: .infinity, alignment: .center)
+                .transition(.move(edge: .bottom))
+            } else {
+                categoryBar
+                content
+            }
         }
+        .frame(maxHeight: .infinity, alignment: .top)
         .background(
             Color.background.ignoresSafeArea()
         )
         .task {
             await viewModel.onAppear()
         }
+        .animation(.easeOut, value: viewModel.state.errorMessage)
     }
     
     // MARK: - Content
@@ -49,6 +61,7 @@ struct VideoGenerationView: View {
             ProgressView()
             .scaleEffect(2)
             .tint(.lightPink)
+            .frame(maxHeight: .infinity)
         } else {
             ScrollView {
                 LazyVGrid(columns: columns, spacing: 16) {

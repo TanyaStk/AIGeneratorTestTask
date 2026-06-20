@@ -11,14 +11,14 @@ final class VideoGenerationViewModel: ObservableObject {
     @Injected(\.videoTemplateProvider) private var service
     
     @Published private(set) var state = State()
-
+    
     func onAppear() async {
         guard state.categories.isEmpty else { return }
         
         await loadCategories()
         await loadTemplates()
     }
-
+    
     func loadCategories() async {
         do {
             let fetched = try await service.fetchCategories()
@@ -28,10 +28,10 @@ final class VideoGenerationViewModel: ObservableObject {
                 state.selectedCategory = fetched.first
             }
         } catch {
-            // TODO: - Handle error
+            state.errorMessage = error.userFacingMessage
         }
     }
-
+    
     func loadTemplates() async {
         guard let selectedCategory = state.selectedCategory else { return }
         
@@ -41,10 +41,10 @@ final class VideoGenerationViewModel: ObservableObject {
         do {
             state.templates = try await service.fetchTemplates(for: selectedCategory)
         } catch {
-            // TODO: - Handle error
+            state.errorMessage = error.userFacingMessage
         }
     }
-
+    
     func select(category: VideoCategory) {
         guard category != state.selectedCategory else { return }
         
@@ -54,6 +54,21 @@ final class VideoGenerationViewModel: ObservableObject {
             await loadTemplates()
         }
     }
+    
+    func retry() {
+        Task {
+            if state.categories.isEmpty {
+                await loadCategories()
+                await loadTemplates()
+            } else {
+                await loadTemplates()
+            }
+        }
+    }
+    
+    func dismissError() {
+        state.errorMessage = nil
+    }
 }
 
 extension VideoGenerationViewModel {
@@ -62,5 +77,6 @@ extension VideoGenerationViewModel {
         var templates: [VideoTemplate] = []
         var selectedCategory: VideoCategory?
         var isLoading = false
+        var errorMessage: String?
     }
 }

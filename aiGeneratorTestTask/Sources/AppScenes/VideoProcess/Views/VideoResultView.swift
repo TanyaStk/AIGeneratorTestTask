@@ -27,9 +27,12 @@ struct VideoResultView: View {
                 actionBar
                 
             case .failure(let failure):
-                ErrorView(error: failure, retryAction: onReplace, cancelAction: {
-                    onCancel?()
-                })
+                ErrorView(
+                    message: failure.userFacingMessage,
+                    retryAction: onReplace,
+                    cancelAction: {
+                        onCancel?()
+                    })
                 .padding(.bottom, 40)
             }
         }

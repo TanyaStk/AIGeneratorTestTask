@@ -49,9 +49,11 @@ final class VideoTemplateService: VideoTemplateProvider {
 
 struct MockVideoTemplateService: VideoTemplateProvider {
     func fetchCategories() async throws -> [VideoCategory] {
-        try await Task.sleep(nanoseconds: 300_000_000)
+        try await Task.sleep(nanoseconds: 500_000_000)
         
         return ["📈 Trending", "😂 Funny", "😢 Sad", "💃 Dance"].map(VideoCategory.init)
+        
+//        throw APIError.invalidResponse(statusCode: 500)
     }
 
     func fetchTemplates(for category: VideoCategory) async throws -> [VideoTemplate] {
