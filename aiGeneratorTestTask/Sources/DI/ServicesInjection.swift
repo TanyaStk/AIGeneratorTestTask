@@ -62,6 +62,7 @@ extension InjectedValues {
         InjectedValues[\.videoGenerationService] = MockVideoGenerationService(successRate: 1.0)
         InjectedValues[\.videoTemplateProvider] = MockVideoTemplateService()
         InjectedValues[\.chatService] = MockChatService()
+        InjectedValues[\.chatHistoryService] = MockChatHistoryService()
         InjectedValues[\.photoLibraryService] = MockPhotoLibraryService()
     }
 }
