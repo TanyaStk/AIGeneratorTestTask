@@ -9,6 +9,8 @@ import Photos
 
 struct VideoResultView: View {
     
+    @Binding var shouldConfirmDownloading: Bool
+    
     var result: Result<VideoGenerationResponse, VideoGenerationError>
     
     let onReplace: () -> ()
@@ -41,9 +43,6 @@ struct VideoResultView: View {
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .padding(.horizontal, 16)
-        .alert("Saved to Photos", isPresented: $state.showDownloadConfirmation) { // TODO: - Replace on custom view
-            Button("OK", role: .cancel) {}
-        }
         .alert("Photos Access Needed", isPresented: $state.showPermissionAlert) {
             Button("Cancel", role: .cancel) {}
             Button("Open Settings") {
@@ -60,7 +59,7 @@ struct VideoResultView: View {
             Text(state.saveErrorMessage)
         }
     }
-
+    
     private var actionBar: some View {
         HStack(spacing: 16) {
             Button {
@@ -136,7 +135,7 @@ private extension VideoResultView {
         case .authorized, .limited:
             do {
                 try await photoLibraryService.saveVideo(at: url)
-                state.showDownloadConfirmation = true
+                shouldConfirmDownloading = true
             } catch {
                 state.saveErrorMessage = error.localizedDescription
                 state.showSaveError = true
@@ -158,7 +157,6 @@ private extension VideoResultView {
 
 private extension VideoResultView {
     struct ViewState {
-        var showDownloadConfirmation = false
         var isSaving = false
         var showPermissionAlert = false
         var showSaveError = false
@@ -167,13 +165,14 @@ private extension VideoResultView {
 }
 
 #Preview("Success") {
-    VStack {
+    VStack{
         NavigationBarView {
             Text("Result")
                 .asNavigationTitle()
         }
         
         VideoResultView(
+            shouldConfirmDownloading: .constant(true),
             result: .success(VideoGenerationResponse(
                 id: 0,
                 templateTitle: "Clay Fool",
@@ -190,6 +189,7 @@ private extension VideoResultView {
         NavigationBarView { Text("Result") }
         
         VideoResultView(
+            shouldConfirmDownloading: .constant(false),
             result: .failure(.serverError(code: 500)),
             onReplace: {},
             onCancel: {}
