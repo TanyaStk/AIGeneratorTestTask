@@ -30,18 +30,22 @@ extension NetworkServiceType {
 
 final class NetworkService: NetworkServiceType {
     private let session = URLSession.shared
+    
     private let decoder: JSONDecoder = {
         let d = JSONDecoder()
         d.keyDecodingStrategy = .convertFromSnakeCase
         d.dateDecodingStrategy = .flexibleISO8601
         return d
     }()
-
+    
     func get<T: Decodable>(path: String, queryItems: [URLQueryItem]) async throws -> T {
         let request = try buildJSONRequest(path: path, method: "GET", queryItems: queryItems, body: Optional<String>.none)
+        
+        request.printRequestLog()
+        
         return try await perform(request)
     }
-
+    
     func post<Body: Encodable, Response: Decodable>(
         path: String,
         queryItems: [URLQueryItem],
@@ -61,9 +65,9 @@ final class NetworkService: NetworkServiceType {
         
         return location
     }
-
+    
     // MARK: - Multipart
-
+    
     func postMultipart<Response: Decodable>(
         path: String,
         queryItems: [URLQueryItem],
@@ -78,7 +82,7 @@ final class NetworkService: NetworkServiceType {
         )
         return try await perform(request)
     }
-
+    
     private func buildMultipartRequest(
         path: String,
         queryItems: [URLQueryItem],
@@ -90,35 +94,35 @@ final class NetworkService: NetworkServiceType {
         }
         if !queryItems.isEmpty { components.queryItems = queryItems }
         guard let url = components.url else { throw APIError.invalidURL }
-
+        
         let boundary = "Boundary-\(UUID().uuidString)"
         var request = URLRequest(url: url)
         request.httpMethod = "POST"
         request.setValue("Bearer \(APIConstants.bearerToken)", forHTTPHeaderField: "Authorization")
         request.setValue("multipart/form-data; boundary=\(boundary)", forHTTPHeaderField: "Content-Type")
-
+        
         var body = Data()
         let crlf = "\r\n"
-
+        
         for (key, value) in textFields {
             body.append("--\(boundary)\(crlf)")
             body.append("Content-Disposition: form-data; name=\"\(key)\"\(crlf)\(crlf)")
             body.append("\(value)\(crlf)")
         }
-
+        
         body.append("--\(boundary)\(crlf)")
         body.append("Content-Disposition: form-data; name=\"\(file.name)\"; filename=\"\(file.filename)\"\(crlf)")
         body.append("Content-Type: \(file.mimeType)\(crlf)\(crlf)")
         body.append(file.data)
         body.append(crlf)
         body.append("--\(boundary)--\(crlf)")
-
+        
         request.httpBody = body
         return request
     }
-
+    
     // MARK: - JSON
-
+    
     private func buildJSONRequest<Body: Encodable>(
         path: String,
         method: String,
@@ -130,7 +134,7 @@ final class NetworkService: NetworkServiceType {
         }
         if !queryItems.isEmpty { components.queryItems = queryItems }
         guard let url = components.url else { throw APIError.invalidURL }
-
+        
         var request = URLRequest(url: url)
         request.httpMethod = method
         request.setValue("Bearer \(APIConstants.bearerToken)", forHTTPHeaderField: "Authorization")
