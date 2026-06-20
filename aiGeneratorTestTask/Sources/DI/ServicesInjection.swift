@@ -64,6 +64,7 @@ extension InjectedValues {
         InjectedValues[\.chatService] = MockChatService()
         InjectedValues[\.chatHistoryService] = MockChatHistoryService()
         InjectedValues[\.photoLibraryService] = MockPhotoLibraryService()
+        InjectedValues[\.apphudService] = MockApphudService()
     }
 }
 

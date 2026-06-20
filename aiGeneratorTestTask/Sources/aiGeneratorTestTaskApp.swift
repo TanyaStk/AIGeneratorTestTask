@@ -30,7 +30,7 @@ struct aiGeneratorTestTaskApp: App {
     
     var body: some Scene {
         WindowGroup {
-            MainScreenView()
+            MainScreenView(viewModel: .init())
                 .embedRouter()
                 .preferredColorScheme(.dark)
         }
