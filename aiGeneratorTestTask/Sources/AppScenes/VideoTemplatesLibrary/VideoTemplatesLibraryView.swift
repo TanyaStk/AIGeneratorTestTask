@@ -7,7 +7,7 @@ import SwiftUI
 
 struct VideoTemplatesLibraryView: View {
     
-    @StateObject var viewModel: VideoGenerationViewModel
+    @StateObject var viewModel: VideoTemplatesLibraryViewModel
     
     @EnvironmentObject private var router: AppRouter
     
@@ -123,6 +123,6 @@ struct VideoTemplatesLibraryView: View {
 #Preview {
     InjectedValues.setupForPreviews()
     
-    return VideoTemplatesLibraryView(viewModel: VideoGenerationViewModel())
+    return VideoTemplatesLibraryView(viewModel: VideoTemplatesLibraryViewModel())
         .embedRouter()
 }
