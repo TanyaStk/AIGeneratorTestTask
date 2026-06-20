@@ -171,7 +171,7 @@ struct AIChatView: View {
     
     private var sendButton: some View {
         Button {
-            viewModel.send()
+            sendMessageOrShowPaywall()
             isTextFieldFocused.toggle()
         } label: {
             Image(.Images.Common.Icons.send)
@@ -194,6 +194,18 @@ struct AIChatView: View {
                     .stroke(lineWidth: 1)
                     .fill(.accent.opacity(0.1))
             )
+    }
+}
+
+// MARK: - Paid logic
+
+private extension AIChatView {
+    func sendMessageOrShowPaywall() {
+        if viewModel.userHasPremium {
+            viewModel.send()
+        } else {
+            router.togglePaywallVisibility()
+        }
     }
 }
 

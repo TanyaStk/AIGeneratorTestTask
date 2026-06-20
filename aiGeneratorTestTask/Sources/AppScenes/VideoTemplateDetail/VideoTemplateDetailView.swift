@@ -101,9 +101,7 @@ struct VideoTemplateDetailView: View {
     
     private var createButton: some View {
         Button {
-            if let request = viewModel.setupRequest() {
-                router.push(.videoProcess(request: request))
-            }
+            generateVideoOrShowPaywall()
         } label: {
             Text("Create")
                 .asGradientButton(viewModel.state.isCreateEnabled)
@@ -117,6 +115,20 @@ struct VideoTemplateDetailView: View {
             BluePinkGradientView()
         } else {
             Color.card
+        }
+    }
+}
+
+// MARK: - Paid logic
+
+private extension VideoTemplateDetailView {
+    func generateVideoOrShowPaywall() {
+        if viewModel.userHasPremium {
+            if let request = viewModel.setupRequest() {
+                router.push(.videoProcess(request: request))
+            }
+        } else {
+            router.togglePaywallVisibility()
         }
     }
 }

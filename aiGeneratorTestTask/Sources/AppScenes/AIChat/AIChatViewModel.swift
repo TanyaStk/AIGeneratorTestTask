@@ -11,6 +11,11 @@ final class AIChatViewModel: ObservableObject {
     
     @Injected(\.chatService) private var chatService
     @Injected(\.chatHistoryService) private var historyService
+    @Injected(\.apphudService) private var apphudService
+    
+    var userHasPremium: Bool {
+        apphudService.hasActiveSubscription
+    }
 
     @Published var state = State()
 
