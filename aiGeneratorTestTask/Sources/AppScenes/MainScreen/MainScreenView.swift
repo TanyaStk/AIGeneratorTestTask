@@ -56,7 +56,7 @@ struct MainScreenView: View {
                 .foregroundStyle(.accent)
             
             Button {
-                router.push(.aiChat)
+                router.push(.aiChat())
             } label: {
                 promptButtonLabel
             }
@@ -97,11 +97,11 @@ struct MainScreenView: View {
             
             VStack(spacing: 12) {
                 AITextToolCardView(tool: .rewriteText) {
-                    router.push(.aiChat)
+                    router.push(.aiChat())
                 }
                 
                 AITextToolCardView(tool: .summarizeText) {
-                    router.push(.aiChat)
+                    router.push(.aiChat())
                 }
             }
             .frame(maxWidth: .infinity)

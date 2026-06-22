@@ -35,11 +35,11 @@ private extension AppRouterViewModifier {
         case .settings:
             SettingsView()
         case .photoToVideoGeneration:
-            VideoTemplatesLibraryView(viewModel: VideoTemplatesLibraryViewModel())
-        case .aiChat:
-            AIChatView(viewModel: AIChatViewModel())
+            VideoTemplatesLibraryView(viewModel: .init())
+        case .aiChat(let chatId):
+            AIChatView(viewModel: .init(chatId: chatId))
         case .templateDetail(selected: let selected, all: let all):
-            VideoTemplateDetailView(viewModel: VideoTemplateDetailViewModel(selected: selected, all: all))
+            VideoTemplateDetailView(viewModel: .init(selected: selected, all: all))
         case .videoProcess(request: let request):
             VideoProcessView(viewModel: .init(request: request))
         case .videoHistory:

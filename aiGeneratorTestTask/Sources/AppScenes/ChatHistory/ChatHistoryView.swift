@@ -3,6 +3,7 @@ import SwiftUI
 struct ChatHistoryView: View {
     
     @StateObject var viewModel: ChatHistoryViewModel
+    @EnvironmentObject private var router: AppRouter
 
     var body: some View {
         VStack(spacing: 24) {
@@ -67,6 +68,9 @@ struct ChatHistoryView: View {
             VStack(spacing: 12) {
                 ForEach(section.chats) { chat in
                     chatRow(chat)
+                        .onTapGesture {
+                            router.push(.aiChat(id: chat.id))
+                        }
                 }
             }
         }
