@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		116D80BB2FE9D4A800258F6E /* VideoPlayer in Frameworks */ = {isa = PBXBuildFile; productRef = 116D80BA2FE9D4A800258F6E /* VideoPlayer */; };
 		11AAC3242FE435EC00C6C8C8 /* ApphudSDK in Frameworks */ = {isa = PBXBuildFile; productRef = 11AAC3232FE435EC00C6C8C8 /* ApphudSDK */; };
 		11B475E92FE56330005D2977 /* Atlantis in Frameworks */ = {isa = PBXBuildFile; productRef = 11B475E82FE56330005D2977 /* Atlantis */; };
 /* End PBXBuildFile section */
@@ -42,6 +43,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				11B475E92FE56330005D2977 /* Atlantis in Frameworks */,
+				116D80BB2FE9D4A800258F6E /* VideoPlayer in Frameworks */,
 				11AAC3242FE435EC00C6C8C8 /* ApphudSDK in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -87,6 +89,7 @@
 			packageProductDependencies = (
 				11AAC3232FE435EC00C6C8C8 /* ApphudSDK */,
 				11B475E82FE56330005D2977 /* Atlantis */,
+				116D80BA2FE9D4A800258F6E /* VideoPlayer */,
 			);
 			productName = aiGeneratorTestTask;
 			productReference = 11EB06602FE08D9700BEE90C /* aiGeneratorTestTask.app */;
@@ -119,6 +122,7 @@
 			packageReferences = (
 				11AAC3222FE435EC00C6C8C8 /* XCRemoteSwiftPackageReference "ApphudSDK" */,
 				11B475E72FE56330005D2977 /* XCRemoteSwiftPackageReference "atlantis" */,
+				116D80B92FE9D4A800258F6E /* XCRemoteSwiftPackageReference "VideoPlayer" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 11EB06612FE08D9700BEE90C /* Products */;
@@ -378,6 +382,14 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
+		116D80B92FE9D4A800258F6E /* XCRemoteSwiftPackageReference "VideoPlayer" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/wxxsw/VideoPlayer";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.2.5;
+			};
+		};
 		11AAC3222FE435EC00C6C8C8 /* XCRemoteSwiftPackageReference "ApphudSDK" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/apphud/ApphudSDK";
@@ -397,6 +409,11 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
+		116D80BA2FE9D4A800258F6E /* VideoPlayer */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 116D80B92FE9D4A800258F6E /* XCRemoteSwiftPackageReference "VideoPlayer" */;
+			productName = VideoPlayer;
+		};
 		11AAC3232FE435EC00C6C8C8 /* ApphudSDK */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = 11AAC3222FE435EC00C6C8C8 /* XCRemoteSwiftPackageReference "ApphudSDK" */;

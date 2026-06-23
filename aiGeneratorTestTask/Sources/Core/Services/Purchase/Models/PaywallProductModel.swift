@@ -7,9 +7,9 @@ import Foundation
 
 struct PaywallProductModel: Identifiable {
     let id: String
-    let price: String
-    let priceFormat: String
-    let weeksInPeriodAmount: Double
+    let displayPrice: String
+    let pricePerWeek: Decimal
+    let pricePerWeekFormatted: String
     let pricePeriod: String
 }
 
@@ -17,25 +17,25 @@ extension PaywallProductModel {
     
     static let fallback = Self(
         id: "fallback.appstore.product.identifier",
-        price: "",
-        priceFormat: "",
-        weeksInPeriodAmount: 0,
+        displayPrice: "",
+        pricePerWeek: 0,
+        pricePerWeekFormatted: "",
         pricePeriod: ""
     )
     
     static let testYearly = Self(
         id: "testYearly.fallback.appstore.product.identifier",
-        price: "69.99",
-        priceFormat: "$",
-        weeksInPeriodAmount: 48,
+        displayPrice: "69.99",
+        pricePerWeek: 6,
+        pricePerWeekFormatted: "",
         pricePeriod: "year"
     )
     
     static let testMonthly = Self(
         id: "testMonthly.fallback.appstore.product.identifier",
-        price: "7.99",
-        priceFormat: "$",
-        weeksInPeriodAmount: 4,
+        displayPrice: "7.99",
+        pricePerWeek: 2,
+        pricePerWeekFormatted: "",
         pricePeriod: "month"
     )
 }

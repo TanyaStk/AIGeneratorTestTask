@@ -102,7 +102,7 @@ private extension PaywallViewModel {
         guard !products.isEmpty else { return }
         
         let perWeekPrices = products.map { product in
-            (Double(product.price) ?? 0) / product.weeksInPeriodAmount
+            product.pricePerWeek
         }
         
         let baselinePerWeekPrice = perWeekPrices.max() ?? 0
@@ -112,12 +112,12 @@ private extension PaywallViewModel {
                 perWeekPrice: perWeekPrice,
                 baselinePerWeekPrice: baselinePerWeekPrice
             )
-            
+
             return .init(
                 id: product.id,
-                perWeekPrice: "\(product.pricePeriod) \(product.priceFormat)\(perWeekPrice.roundedString)",
+                perWeekPrice: "\(product.pricePeriod) \(product.pricePerWeekFormatted)",
                 perWeekString: "/ week",
-                totalPrice: "\(product.priceFormat) \(product.price)",
+                totalPrice: product.displayPrice,
                 saleAmount: saleAmount
             )
         }
@@ -126,12 +126,12 @@ private extension PaywallViewModel {
         state.selectedProduct = state.products?.first
     }
     
-    func calculateSaleAmount(perWeekPrice: Double, baselinePerWeekPrice: Double) -> Int {
+    func calculateSaleAmount(perWeekPrice: Decimal, baselinePerWeekPrice: Decimal) -> Int {
         guard baselinePerWeekPrice > 0 else { return 0 }
         
-        let discount = 1 - (perWeekPrice / baselinePerWeekPrice)
+        let discount: Decimal = (1 - (perWeekPrice / baselinePerWeekPrice)) * 100
         
-        return Int((discount * 100).rounded())
+        return NSDecimalNumber(decimal: discount).rounding(accordingToBehavior: nil).intValue
     }
     
     func delayCloseAppearance() {
@@ -155,12 +155,5 @@ extension PaywallViewModel {
         var alertType: PurchaseAlertType?
         var showWebViewWithLink: PaywallLink?
         var shouldShowCloseButton: Bool = false
-    }
-}
-
-private extension Double {
-    
-    var roundedString: String {
-        String(format: "%.2f", self)
     }
 }

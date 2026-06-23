@@ -24,7 +24,7 @@ protocol ApphudServiceType {
 final class ApphudService: ApphudServiceType {
     
     private let hasActiveSubscriptionSubject = PassthroughSubject<Bool, Never>()
-    private let productsModelSubject = CurrentValueSubject<[PaywallProductModel], Never>([])
+    private let productsModelSubject = CurrentValueSubject<[Product], Never>([])
     private let apphudPaywallsSubject = CurrentValueSubject<[ApphudPaywall], Never>([])
     
     private let userSession: UserSessionProvider
@@ -38,26 +38,28 @@ final class ApphudService: ApphudServiceType {
     }
     
     var productsDomainModelPublisher: AnyPublisher<[PaywallProductModel], Never> {
-        productsModelSubject.eraseToAnyPublisher()
+        productsModelSubject
+            .compactMap({ $0.compactMap { $0.toDomain() } })
+            .eraseToAnyPublisher()
     }
     
     var hasActiveSubscription: Bool {
-                updateSubscriptionState()
-//        true
+        updateSubscriptionState()
     }
     
     func start(with apiKey: String) {
         Task(priority: .high) {
             Apphud.start(apiKey: apiKey)
-            
             setup()
+            
+            try? await fetchProducts()
         }
     }
     
     @MainActor
     @discardableResult
     func purchase(productId: String) async throws -> Bool {
-        guard let product = findApphudProduct(matching: productId) else {
+        guard let product = findProduct(matching: productId) else {
             throw PaywallError.purchaseProductNotSelected
         }
         
@@ -110,12 +112,20 @@ private extension ApphudService {
 #endif
     }
     
-    func findApphudProduct(matching id: String) -> ApphudProduct? {
-        apphudPaywallsSubject
+    func findProduct(matching id: String) -> Product? {
+        productsModelSubject
             .value
-            .map { $0.products }
-            .reduce([], +)
-            .first(where: { $0.productId == id })
+            .first(where: { $0.id == id })
+    }
+    
+    func fetchProducts() async throws {
+        guard productsModelSubject.value.isEmpty else { return }
+        
+        let products = try await Apphud.fetchProducts()
+        guard !products.isEmpty else { return }
+        
+        productsModelSubject.send(products)
+        updateSubscriptionState()
     }
     
     @discardableResult
@@ -132,13 +142,13 @@ extension ApphudService: ApphudDelegate {
     
     func paywallsDidFullyLoad(paywalls: [ApphudPaywall]) {
         Task(priority: .high) {
-            let asyncModels = await paywalls
+            let productsModels = await paywalls
                 .filter({ $0.identifier == AppConstants.Apphud.paywallID })
-                .asyncMap { await $0.products.toDomain() }
-            let domainModels = asyncModels.flatMap { $0 }
+                .asyncMap { await $0.products.toProducts() }
+                .flatMap { $0 }
             
             apphudPaywallsSubject.send(paywalls)
-            productsModelSubject.send(domainModels)
+            productsModelSubject.send(productsModels)
             updateSubscriptionState()
         }
     }
@@ -150,7 +160,6 @@ extension ApphudService: ApphudDelegate {
     func userDidLoad(user: ApphudUser) {
         userSession.setID(user.userId)
     }
-    
 }
 
 // MARK: - Mock
@@ -207,4 +216,3 @@ final class MockApphudService: ApphudServiceType {
     }
     
 }
-

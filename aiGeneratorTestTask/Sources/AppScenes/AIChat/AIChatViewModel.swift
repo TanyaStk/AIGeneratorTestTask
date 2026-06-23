@@ -20,6 +20,28 @@ final class AIChatViewModel: ObservableObject {
     @Published var state = State()
 
     private var chatId: String?
+    
+    init(chatId: String? = nil) {
+        self.chatId = chatId
+        self.state = State(hasStarted: chatId != nil)
+        
+        if let chatId {
+            Task { await loadHistory(chatId: chatId) }
+        }
+    }
+    
+    func loadHistory(chatId: String) async {
+        state.isLoading = true
+        
+        defer { state.isLoading = false }
+        
+        do {
+            state.messages = try await historyService.fetchMessages(chatId: chatId, limit: nil, offset: 0)
+            state.hasStarted = !state.messages.isEmpty
+        } catch {
+            state.errorMessage = error.localizedDescription
+        }
+    }
 
     func send() {
         let text = state.inputText.trimmingCharacters(in: .whitespacesAndNewlines)
