@@ -1,5 +1,5 @@
 {
-  "originHash" : "c070979fba13a18be4d50db9d37c49d2e1e9fd1160390134d06cb9232d7a358a",
+  "originHash" : "20d75d37c528a17b105489aa256d6a512238fcc29495a9387b37fea7470dbcd0",
   "pins" : [
     {
       "identity" : "apphudsdk",
@@ -17,6 +17,24 @@
       "state" : {
         "revision" : "6427600ec87d516a43754e4eaa7762f3271ac77f",
         "version" : "1.36.0"
+      }
+    },
+    {
+      "identity" : "gsplayer",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/wxxsw/GSPlayer.git",
+      "state" : {
+        "revision" : "7a384dee1fbeca02e176de8b4112bfded36f42e0",
+        "version" : "0.2.30"
+      }
+    },
+    {
+      "identity" : "videoplayer",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/wxxsw/VideoPlayer",
+      "state" : {
+        "revision" : "7a388d3e16ba7a9c347ef2c41079d517eecc9c5a",
+        "version" : "1.2.5"
       }
     }
   ],
